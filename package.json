@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "desktop:build": "npm run build && cargo build --release --manifest-path src-tauri/Cargo.toml"
   },
   "dependencies": {
     "react": "^18.2.0",

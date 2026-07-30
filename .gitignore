@@ -1,5 +1,11 @@
 node_modules
 dist
+release
+release-build
+release-final
+.vercel
+src-tauri/target
+artifacts
 .DS_Store
 *.local
 .vite-dev.pid

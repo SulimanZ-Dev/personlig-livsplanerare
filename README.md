@@ -27,3 +27,14 @@ npm run build
 ```
 
 All användardata lagras lokalt i webbläsaren under nyckeln `life-planner:v1`.
+
+## Installation
+
+Webbappen finns på [personlig-livsplanerare.vercel.app](https://personlig-livsplanerare.vercel.app).
+
+- På telefon: öppna länken och välj **Lägg till på hemskärmen**.
+- På Windows: bygg den lilla Tauri-klienten med `npm run desktop:build`.
+
+Windows-klienten laddar produktionsversionen från Vercel. När `main` uppdateras på GitHub bygger och publicerar Vercel automatiskt den senaste versionen utan att klienten behöver installeras om.
+
+> Observera: appdata lagras fortfarande per enhet. Synkronisering mellan telefon och dator kräver ett autentiserat backend-lager.
