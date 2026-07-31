@@ -17,6 +17,8 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@emnapi/core": "^2.0.0-alpha.3",
+    "@emnapi/runtime": "^2.0.0-alpha.3",
     "@eslint/js": "^10.0.1",
     "@vitejs/plugin-react": "^6.0.5",
     "eslint": "^10.8.0",
