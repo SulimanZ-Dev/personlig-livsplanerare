@@ -13,8 +13,9 @@ fn main() {
                 WebviewUrl::External(LIVE_APP_URL.parse().expect("valid production URL")),
             )
             .title("Livssystem")
-            .inner_size(430.0, 860.0)
-            .min_inner_size(360.0, 640.0)
+            .inner_size(1180.0, 820.0)
+            .min_inner_size(390.0, 650.0)
+            .center()
             .resizable(true)
             .build()?;
             Ok(())

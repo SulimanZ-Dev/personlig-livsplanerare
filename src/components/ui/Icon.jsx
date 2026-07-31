@@ -14,9 +14,18 @@ const paths = {
   trend: "M3 17l6-6 4 4 8-8 M15 7h6v6",
   archive: "M4 7h16v14H4z M3 3h18v4H3z M9 11h6",
   edit: "M12 20h9 M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z",
+  pin: "M9 3h6l-1 6 4 4H6l4-4z M12 13v8",
+  arrowUp: "M12 19V5 M6 11l6-6 6 6",
+  arrowDown: "M12 5v14 M18 13l-6 6-6-6",
+  swap: "M7 7h13l-3-3 M20 7l-3 3 M17 17H4l3-3 M4 17l3 3",
+  minus: "M5 12h14",
+  scale: "M4 19h16 M7 19l1-10h8l1 10 M10 9a2 2 0 114 0",
+  calendar: "M4 5h16v16H4z M8 3v4 M16 3v4 M4 10h16",
+  pulse: "M3 12h4l2-5 4 10 2-5h6",
+  user: "M12 12a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0",
+  logout: "M10 17l5-5-5-5 M15 12H3 M19 4h2v16h-2",
 };
 
 export function Icon({ name, size = 20 }) {
   return <svg aria-hidden="true" viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={paths[name] || paths.target} /></svg>;
 }
-
