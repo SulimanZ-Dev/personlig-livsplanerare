@@ -1,44 +1,55 @@
-import { goalProgress, GOAL_TYPES } from "../../core/goals/goalProgress";
+import { useMemo, useState } from "react";
+import { getGoalStatus } from "../../core/goals/goalEngine";
 import { Icon } from "../ui/Icon";
+import { GoalWidget } from "./GoalWidget";
 
-export function GoalsView({ state, onCreate, onEdit, onUpdate, onArchive }) {
-  const goals = Object.values(state.goals).filter((goal) => goal.status === "active");
-  const entries = Object.values(state.goalEntries);
+const filters = [
+  ["all", "Alla"],
+  ["attention", "Behöver fokus"],
+  ["achieved", "Uppnådda"],
+  ["archived", "Arkiv"],
+];
 
-  const quickUpdate = (goal) => {
-    const progress = goalProgress(goal, entries);
-    const raw = window.prompt(`Nytt värde för ${goal.name}`, String(progress.value));
-    if (raw !== null && !Number.isNaN(Number(raw))) onUpdate(goal, Number(raw));
-  };
+export function GoalsView({ state, onCreate, onEdit, onQuickUpdate, onChecklist, onArchive, onPin, onMovePin }) {
+  const [filter, setFilter] = useState("all");
+  const goals = useMemo(() => Object.values(state.goals).filter((goal) => {
+    if (filter === "archived") return goal.status === "archived";
+    if (goal.status === "archived") return false;
+    const status = getGoalStatus(state, goal).id;
+    if (filter === "attention") return ["at_risk", "overdue", "lost"].includes(status);
+    if (filter === "achieved") return status === "achieved";
+    return true;
+  }), [filter, state]);
 
   return (
     <div className="page">
-      <header className="page-header row-between"><div><div className="eyebrow">ALLA LIVSOMRÅDEN</div><h1>Mål</h1></div><button className="icon-button accent" onClick={onCreate}><Icon name="plus" /></button></header>
+      <header className="page-header row-between">
+        <div><div className="eyebrow">DYNAMISKA MÅL</div><h1>Din riktning</h1><p>Det som mäts får rörelse. Det som ändras räknas om.</p></div>
+        <button aria-label="Skapa mål" className="icon-button accent" onClick={onCreate}><Icon name="plus" /></button>
+      </header>
+
+      <div className="filter-chips">{filters.map(([id, label]) => <button key={id} className={filter === id ? "active" : ""} onClick={() => setFilter(id)}>{label}</button>)}</div>
+
       <div className="goal-list">
         {goals.map((goal) => {
-          const progress = goalProgress(goal, entries);
+          const pinnedIndex = state.dashboard.pinnedGoalIds.indexOf(goal.id);
           return (
-            <article className="card goal-card" key={goal.id}>
-              <div className="row-between">
-                <div><span className="pill" style={{ color: goal.color }}>{goal.category || goal.moduleId}</span><h3>{goal.name}</h3></div>
-                <div className="row-actions"><button className="bare-button" onClick={() => onEdit(goal)}><Icon name="edit" size={17} /></button><button className="bare-button" onClick={() => onArchive(goal.id)}><Icon name="archive" size={17} /></button></div>
-              </div>
-              {goal.type === "checklist" ? (
-                <div className="check-list">{goal.checklistItems.map((item) => <label key={item.id}><input type="checkbox" checked={item.done} onChange={() => onUpdate(goal, item.id)} /><span>{item.label}</span></label>)}</div>
-              ) : (
-                <button className="progress-block" onClick={() => quickUpdate(goal)}>
-                  <div className="row-between metric-line"><span>{GOAL_TYPES[goal.type].label}</span><strong>{progress.value} / {progress.target} {goal.unit}</strong></div>
-                  <div className="progress"><i style={{ width: `${progress.percent}%`, background: goal.color }} /></div>
-                </button>
+            <div className="goal-manage-wrap" key={goal.id}>
+              <GoalWidget state={state} goal={goal} onOpen={onEdit} onQuickUpdate={onQuickUpdate} />
+              {goal.type === "checklist" && (
+                <div className="inline-checklist">{goal.checklistItems.map((item) => <label key={item.id}><input type="checkbox" checked={item.done} onChange={() => onChecklist(goal, item.id)} /><span>{item.label}</span></label>)}</div>
               )}
-              {goal.deadline && <div className="muted mono">DEADLINE · {goal.deadline}</div>}
-            </article>
+              <div className="goal-toolbar">
+                <button onClick={() => onPin(goal.id)} className={pinnedIndex >= 0 ? "active" : ""}><Icon name="pin" size={14} />{pinnedIndex >= 0 ? "Fäst på Hem" : "Fäst"}</button>
+                {pinnedIndex >= 0 && <><button disabled={pinnedIndex === 0} onClick={() => onMovePin(goal.id, -1)}><Icon name="arrowUp" size={14} />Upp</button><button disabled={pinnedIndex === state.dashboard.pinnedGoalIds.length - 1} onClick={() => onMovePin(goal.id, 1)}><Icon name="arrowDown" size={14} />Ned</button></>}
+                <button onClick={() => onEdit(goal)}><Icon name="edit" size={14} />Redigera</button>
+                {goal.status !== "archived" && <button onClick={() => onArchive(goal.id)}><Icon name="archive" size={14} />Arkivera</button>}
+              </div>
+            </div>
           );
         })}
-        {!goals.length && <div className="empty-state">Inga aktiva mål ännu.</div>}
+        {!goals.length && <div className="empty-state alive"><Icon name="target" size={30} /><strong>Här finns utrymme för något viktigt.</strong><span>Skapa ett mätbart mål så bygger appen dashboard, prognos och nästa handling åt dig.</span><button className="primary-button" onClick={onCreate}>Skapa mål</button></div>}
       </div>
-      <button className="primary-button sticky-action" onClick={onCreate}><Icon name="plus" size={18} /> Skapa nytt mål</button>
     </div>
   );
 }
-
