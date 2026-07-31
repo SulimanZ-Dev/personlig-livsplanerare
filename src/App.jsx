@@ -16,7 +16,7 @@ import { LogView } from "./modules/dashboard/LogView";
 import { MoreView } from "./modules/dashboard/MoreView";
 import { TodayView } from "./modules/dashboard/TodayView";
 import { EconomyView } from "./modules/economy/EconomyView";
-import { removeTransaction, upsertTransaction } from "./modules/economy/economyModel";
+import { removeAccountFromPlannerState, removeTransaction, transactionTouchesAccount, upsertTransaction } from "./modules/economy/economyModel";
 import { GymView } from "./modules/gym/GymView";
 import { HabitsView } from "./modules/habits/HabitsView";
 import { NutritionView } from "./modules/nutrition/NutritionView";
@@ -174,10 +174,13 @@ export default function App() {
     )} onDeleteTransaction={(transaction) => update(
       (current) => ({ ...current, modules: { ...current.modules, economy: { ...current.modules.economy, transactions: removeTransaction(current.modules.economy.transactions, transaction.id) } } }),
       activity("economy", `Borttagen transaktion · ${transaction.amount.toLocaleString("sv-SE")} kr`, transaction.note || "Saldot räknades om"),
-    )} onAddAccount={(name, openingBalance) => {
-      const id = `account-${crypto.randomUUID()}`;
-      update((current) => ({ ...current, modules: { ...current.modules, economy: { ...current.modules.economy, accounts: { ...current.modules.economy.accounts, [id]: { id, name, openingBalance, color: "#3ddc84", archived: false } } } } }), activity("economy", `Nytt konto: ${name}`, `Öppningssaldo ${openingBalance.toLocaleString("sv-SE")} kr`));
-    }} />,
+    )} onSaveAccount={(account, editing) => update(
+      (current) => ({ ...current, modules: { ...current.modules, economy: { ...current.modules.economy, accounts: { ...current.modules.economy.accounts, [account.id]: account } } } }),
+      activity("economy", `${editing ? "Konto ändrat" : "Nytt konto"}: ${account.name}`, `Öppningssaldo ${account.openingBalance.toLocaleString("sv-SE")} kr`),
+    )} onDeleteAccount={(account) => update(
+      (current) => removeAccountFromPlannerState(current, account.id),
+      activity("economy", `Konto borttaget: ${account.name}`, `${state.modules.economy.transactions.filter((transaction) => transactionTouchesAccount(transaction, account.id)).length} kopplade transaktioner togs bort · kan ångras`),
+    )} />,
     gym: <GymView data={state.modules.gym} onSave={(workout) => update((current) => {
       const names = workout.exercises.map((exercise) => exercise.name);
       return { ...current, modules: { ...current.modules, gym: { ...current.modules.gym, exerciseCatalog: [...new Set([...current.modules.gym.exerciseCatalog, ...names])], workouts: [...current.modules.gym.workouts, workout] } } };

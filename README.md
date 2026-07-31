@@ -8,7 +8,7 @@ En mobile-first, local-first personlig livsplanerare med samma mörka terminalk�
 - Dynamisk status: aktivt, på rätt väg, risk, försenat, uppnått och tappat efter uppnått
 - Prognos, trend, nästa handling, daglig coachning och full progresshistorik
 - Hybrid-dashboard med valbara, flyttbara mål och områdeswidgets
-- Ekonomi med insättning, uttag, överföring, konton och dynamiska sparmål
+- Ekonomi med insättning, uttag, överföring, redigerbara/borttagbara konton och dynamiska sparmål
 - Gympass med valfria passnamn, övningar, set/reps/vikt och progressionsgraf
 - Rutiner med never-zero, minsta version och two-miss-regel
 - Deep-work-timer med veckosummering

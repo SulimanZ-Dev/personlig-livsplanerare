@@ -1,6 +1,6 @@
 [package]
 name = "livssystem"
-version = "1.2.0"
+version = "1.2.1"
 description = "Desktop shell for Livssystem"
 authors = ["SulimanZ-Dev"]
 edition = "2021"
