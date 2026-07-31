@@ -80,6 +80,8 @@ export function EconomyView({ state, onUpsertTransaction, onDeleteTransaction, o
         <p>Summan räknas om från hela transaktionslistan — redigeringar och borttagningar slår igenom direkt.</p>
       </header>
 
+      {data.monthlyPlan && <section className="monthly-plan card"><div><span>CSN / MÅNAD</span><strong>{money(data.monthlyPlan.income)}</strong></div><div><span>FASTA</span><strong>{money(data.monthlyPlan.fixedExpenses)}</strong></div><div className="accent"><span>AUTOSPAR</span><strong>{money(data.monthlyPlan.guaranteedSavings)}</strong></div><div><span>FLEX</span><strong>{money(data.monthlyPlan.flex)}</strong></div><p>Transfer dag {data.monthlyPlan.autoTransferDay} → {data.accounts[data.monthlyPlan.autoTransferAccountId]?.name}</p></section>}
+
       <div className="account-scroll">
         {accounts.map((account) => {
           const balance = accountBalance(data, account.id);

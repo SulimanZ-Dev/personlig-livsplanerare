@@ -1,6 +1,7 @@
-import { isThisWeek, localISO } from "../core/dates/dateUtils";
+import { isThisWeek, localISO, startOfWeek } from "../core/dates/dateUtils";
 import { getTwoMissWarnings } from "../core/attention/attentionEngine";
 import { getPhaseStatus } from "../core/phases/phaseEngine";
+import { getGoalValue } from "../core/goals/goalEngine";
 import { economyTotal } from "../modules/economy/economyModel";
 
 const number = (value, options = {}) => new Intl.NumberFormat("sv-SE", options).format(value);
@@ -14,6 +15,19 @@ const measurementDetail = (state, type, unit) => {
   if (values.length < 2) return `första mätningen · ${unit}`;
   const delta = Number(values.at(-1).value) - Number(values.at(-2).value);
   return `${delta > 0 ? "+" : ""}${number(delta, { maximumFractionDigits: 1 })} ${unit} sedan sist`;
+};
+
+const activeGoal = (state, predicate) => Object.values(state.goals).find((goal) => goal.status !== "archived" && predicate(goal));
+
+const workoutWeekStreak = (workouts = []) => {
+  const weeks = new Set(workouts.map((workout) => localISO(startOfWeek(new Date(workout.date)))));
+  let streak = 0;
+  const cursor = startOfWeek();
+  while (weeks.has(localISO(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 7);
+  }
+  return streak;
 };
 
 export const MODULE_REGISTRY = [
@@ -142,6 +156,42 @@ export const MODULE_REGISTRY = [
     isAvailable: (state) => Boolean(state.modules.sleep.logs.length || state.modules.sleep.targetWakeTime),
     summary: (state) => state.modules.sleep.logs.length ? `${Number(state.modules.sleep.logs.at(-1).durationHours || 0).toFixed(1)} h` : "Sätt rytm",
     detail: (state) => state.modules.sleep.targetWakeTime ? `upp ${state.modules.sleep.targetWakeTime}` : "återhämtning och vilopuls",
+  },
+  {
+    id: "economyMilestone",
+    route: "economy",
+    label: "Nästa milstolpe",
+    icon: "wallet",
+    color: "#3ddc84",
+    isAvailable: (state) => state.dashboard.widgetOrder.includes("economyMilestone") && Boolean(activeGoal(state, (goal) => goal.moduleId === "economy")),
+    summary: (state) => {
+      const goal = activeGoal(state, (item) => item.moduleId === "economy");
+      return `${Math.max(0, Number(goal.targetValue) - getGoalValue(state, goal)).toLocaleString("sv-SE")} kr kvar`;
+    },
+    detail: (state) => activeGoal(state, (goal) => goal.moduleId === "economy")?.name || "Ekonomiskt mål",
+  },
+  {
+    id: "gymStreak",
+    route: "gym",
+    label: "Träningsstreak",
+    icon: "dumbbell",
+    color: "#5eb1ff",
+    isAvailable: (state) => state.dashboard.widgetOrder.includes("gymStreak"),
+    summary: (state) => `${workoutWeekStreak(state.modules.gym.workouts)} veckor`,
+    detail: (state) => `${state.modules.gym.workouts.filter((workout) => isThisWeek(workout.date)).length} pass denna vecka`,
+  },
+  {
+    id: "studyTarget",
+    route: "studies",
+    label: "Veckans studier",
+    icon: "book",
+    color: "#a78bfa",
+    isAvailable: (state) => state.dashboard.widgetOrder.includes("studyTarget") && Boolean(activeGoal(state, (goal) => goal.source === "study_weekly")),
+    summary: (state) => {
+      const goal = activeGoal(state, (item) => item.source === "study_weekly");
+      return `${getGoalValue(state, goal).toLocaleString("sv-SE", { maximumFractionDigits: 1 })}/${goal.targetValue} h`;
+    },
+    detail: () => "deep work denna vecka",
   },
 ];
 

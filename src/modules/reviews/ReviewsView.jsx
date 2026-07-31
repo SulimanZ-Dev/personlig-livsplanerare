@@ -15,6 +15,7 @@ export function ReviewsView({ state, data, onSave }) {
     ...defaultTemplates,
     ...Object.fromEntries(Object.entries(data.templates || {}).map(([id, value]) => [id, { ...defaultTemplates[id], ...value }])),
   };
+  const template = templates[type];
   const goalInsights = Object.values(state.goals)
     .filter((goal) => goal.status !== "archived")
     .map((goal) => ({ goal, status: getGoalStatus(state, goal), progress: getGoalProgress(state, goal), movement: getGoalMovement(state, goal) }));

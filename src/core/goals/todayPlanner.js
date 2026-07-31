@@ -6,6 +6,7 @@ const priority = { overdue: 0, lost: 1, at_risk: 2, on_track: 3, active: 4, achi
 
 export function buildTodayPlan(state, date = localISO()) {
   const floorMode = isContingencyDay(state, date);
+  const floorRules = state.today?.contingency?.date === date ? state.today.contingency.floorRules || {} : {};
   const actions = Object.values(state.goals)
     .filter((goal) => goal.status !== "archived")
     .map((goal) => {
@@ -15,7 +16,7 @@ export function buildTodayPlan(state, date = localISO()) {
         id: `goal:${goal.id}:${date}`,
         goalId: goal.id,
         title: goal.name,
-        detail: floorMode ? `Floor-läge: ${goal.floorAction || goal.actionLabel || "gör minsta möjliga nästa steg i två minuter"}` : getNextAction(state, goal),
+        detail: floorMode ? `Floor-läge: ${floorRules.goals?.[goal.id] || goal.floorAction || floorRules.default || goal.actionLabel || "gör minsta möjliga nästa steg i två minuter"}` : getNextAction(state, goal),
         color: goal.color,
         status,
         progress,
@@ -33,7 +34,7 @@ export function buildTodayPlan(state, date = localISO()) {
       habitId: habit.id,
       title: habit.name,
       detail: completed ? "Klart för idag." : floorMode
-        ? `Floor-läge: ${habit.minimumVersion || "gör två minuter"}.`
+        ? `Floor-läge: ${floorRules.habits?.[habit.id] || habit.minimumVersion || floorRules.default || "gör två minuter"}.`
         : `Never zero: ${habit.minimumVersion || "gör minsta möjliga version"}.`,
       color: habit.color,
       status: { id: completed ? "achieved" : "active", label: completed ? "Klar" : "Idag", tone: completed ? "positive" : "neutral" },

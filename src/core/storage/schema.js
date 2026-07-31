@@ -1,4 +1,4 @@
-import { localISO } from "../dates/dateUtils";
+import { localISO } from "../dates/dateUtils.js";
 
 const now = () => new Date().toISOString();
 

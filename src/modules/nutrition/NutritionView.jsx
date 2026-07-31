@@ -38,6 +38,8 @@ export function NutritionView({ state, onSaveCalculation, onCreateGoal }) {
     <div className="page nutrition-page">
       <header className="page-header nutrition-hero"><div className="eyebrow">PUBLIK KALKYLATOR · INGET KONTO KRÄVS</div><h1>Kalorier med omdöme</h1><p>Räkna på energi, takt och protein — med varningar när matematiken blir sämre än planen.</p></header>
 
+      {profileDefaults.proteinMin && <section className="card nutrition-strategy"><div><span className="eyebrow">DIN NUTRITION-RAM</span><strong>{profileDefaults.proteinMin}–{profileDefaults.proteinMax} g protein</strong><small>{profileDefaults.waterLiters} L vatten · måttligt underskott</small></div><div><b>{profileDefaults.mealTimes?.breakfast}</b><span>frukost</span><b>{profileDefaults.mealTimes?.lunch}</b><span>lunch</span><b>{profileDefaults.mealTimes?.dinner}</b><span>middag</span></div></section>}
+
       <form className="card nutrition-form form-stack" onSubmit={submit}>
         <div className="field-grid"><label>Vikt, kg<input type="number" min="35" max="350" step="0.1" inputMode="decimal" value={form.weight} onChange={field("weight")} required /></label><label>Målvikt, kg · valfritt<input type="number" min="30" max="350" step="0.1" inputMode="decimal" value={form.targetWeight} onChange={field("targetWeight")} placeholder="Sätt senare" /></label></div>
         <div className="field-grid three"><label>Längd, cm<input type="number" min="120" max="230" value={form.height} onChange={field("height")} required /></label><label>Ålder<input type="number" min="16" max="100" value={form.age} onChange={field("age")} required /></label><label>Kön<select value={form.gender} onChange={field("gender")}><option value="male">Man</option><option value="female">Kvinna</option></select></label></div>
@@ -57,6 +59,7 @@ export function NutritionView({ state, onSaveCalculation, onCreateGoal }) {
         {result.inputs.targetWeight > 0 && result.inputs.targetWeight < result.inputs.weight ? <button className="secondary-button nutrition-goal-button" onClick={() => onCreateGoal(result)}><Icon name="target" size={18} /> Spara som viktmål</button> : <p className="nutrition-goal-hint">Lägg till en målvikt när du vill spara beräkningen som ett dynamiskt minskningsmål.</p>}
         <p className="nutrition-disclaimer">Beräkningen är en uppskattning, inte medicinsk rådgivning. Justera från verklig vikttrend och sök professionell hjälp vid sjukdom, graviditet eller ätproblematik.</p>
       </section>}
+      {state.modules.nutrition.mealLibrary?.length > 0 && <section className="section"><div className="section-title"><span>REPEAT MEALS</span><small>rotera var {profileDefaults.rotationWeeks} vecka</small></div><div className="meal-library">{state.modules.nutrition.mealLibrary.map((meal) => <article className="card" key={meal.meal}><div className="row-between"><strong>{meal.meal}</strong><span className="mono">{meal.time}</span></div>{meal.options.map((option) => <p key={option}>→ {option}</p>)}</article>)}</div>{profileDefaults.supplements?.length > 0 && <aside className="card nutrition-rules"><strong>Ramar</strong><p>{profileDefaults.supplements.join(" · ")} · ingen {profileDefaults.exclusions.join(" / ").toLowerCase()} · burgare/pizza {profileDefaults.burgerPizzaPerMonth}×/månad planerat.</p></aside>}</section>}
     </div>
   );
 }

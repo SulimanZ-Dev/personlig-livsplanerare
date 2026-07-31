@@ -151,7 +151,7 @@ export default function App() {
       update((current) => ({ ...current, today: { ...current.today, contingency: null } }));
       return;
     }
-    const entry = { id: `contingency-${crypto.randomUUID()}`, date: localISO(), mode: definition.id, label: definition.label, occurredAt: new Date().toISOString() };
+    const entry = { id: `contingency-${crypto.randomUUID()}`, date: localISO(), mode: definition.id, label: definition.label, floorRules: definition.floorRules || {}, occurredAt: new Date().toISOString() };
     update((current) => ({
       ...current,
       today: { ...current.today, contingency: entry },

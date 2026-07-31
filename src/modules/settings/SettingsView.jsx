@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Icon } from "../../components/ui/Icon";
+import { Modal } from "../../components/ui/Modal";
 import { useAuth } from "../../core/sync/AuthContext";
 
 export function SettingsView({ state, onUpdateProfile, onImport, onReset, onReplayIntro }) {
@@ -9,6 +10,8 @@ export function SettingsView({ state, onUpdateProfile, onImport, onReset, onRepl
   const [resetScope, setResetScope] = useState(user ? "cloud" : "local");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [pasteOpen, setPasteOpen] = useState(false);
+  const [pasteText, setPasteText] = useState("");
 
   const exportData = () => {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
@@ -23,18 +26,23 @@ export function SettingsView({ state, onUpdateProfile, onImport, onReset, onRepl
     setMessage("Backup nedladdad.");
   };
 
-  const importData = async (event) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
+  const importJson = (text) => {
     try {
-      const parsed = JSON.parse(await file.text());
+      const parsed = JSON.parse(text);
       if (!parsed.modules || !parsed.goals || !parsed.profile) throw new Error("shape");
       onImport(parsed);
       setMessage("Backup importerad och kontrollerad.");
+      setPasteOpen(false);
+      setPasteText("");
     } catch {
       setMessage("Filen är inte en giltig Livssystem-backup.");
     }
+  };
+
+  const importData = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (file) importJson(await file.text());
   };
 
   const purge = async () => {
@@ -59,8 +67,9 @@ export function SettingsView({ state, onUpdateProfile, onImport, onReset, onRepl
       <article className="card setting-card"><span className="setting-icon"><Icon name="pulse" /></span><div><strong>Onboarding</strong><p>Spela upp den korta introduktionen igen.</p></div><button className="secondary-button compact-button" onClick={onReplayIntro}>Visa intro</button></article>
     </section>
 
-    <section className="section"><div className="section-title"><span>BACKUP · JSON</span></div><div className="backup-grid"><button className="card backup-action" onClick={exportData}><Icon name="download" /><strong>Exportera allt</strong><small>Ladda ned en portabel backup.</small></button><button className="card backup-action" onClick={() => fileRef.current?.click()}><Icon name="upload" /><strong>Importera backup</strong><small>Ersätter nuvarande data efter validering.</small></button><input ref={fileRef} className="visually-hidden" type="file" accept="application/json,.json" onChange={importData} /></div>{message && <div className="form-success settings-message">{message}</div>}</section>
+    <section className="section"><div className="section-title"><span>BACKUP · JSON</span></div><div className="backup-grid"><button className="card backup-action" onClick={exportData}><Icon name="download" /><strong>Exportera allt</strong><small>Ladda ned en portabel backup.</small></button><button className="card backup-action" onClick={() => fileRef.current?.click()}><Icon name="upload" /><strong>Importera fil</strong><small>Ersätter nuvarande data efter validering.</small></button><button className="card backup-action backup-paste" onClick={() => setPasteOpen(true)}><Icon name="edit" /><strong>Klistra in JSON</strong><small>Smidigt på telefon eller från GitHub.</small></button><input ref={fileRef} className="visually-hidden" type="file" accept="application/json,.json" onChange={importData} /></div>{message && <div className="form-success settings-message">{message}</div>}</section>
 
     <section className="danger-zone card"><div className="eyebrow">DANGER ZONE</div><h2>Töm all data</h2><p>Detta tar bort mål, transaktioner, pass, rutiner, sessionshistorik och reviews. En lokal reset loggar först ut så att molnkopian inte påverkas.</p>{user && <div className="reset-scope"><label><input type="radio" name="scope" value="local" checked={resetScope === "local"} onChange={() => setResetScope("local")} /> Bara denna enhet</label><label><input type="radio" name="scope" value="cloud" checked={resetScope === "cloud"} onChange={() => setResetScope("cloud")} /> Denna enhet + molnet</label></div>}<label>Skriv <strong>RADERA</strong> för att låsa upp<input value={confirmText} onChange={(event) => setConfirmText(event.target.value)} placeholder="RADERA" autoComplete="off" /></label><button className="danger-button" disabled={confirmText !== "RADERA" || busy} onClick={purge}><Icon name="trash" size={17} /> {busy ? "Tömmer…" : "Töm all data"}</button></section>
+    {pasteOpen && <Modal title="Klistra in backup-JSON" onClose={() => setPasteOpen(false)}><form className="form-stack" onSubmit={(event) => { event.preventDefault(); importJson(pasteText); }}><p className="paste-help">Innehållet valideras och normaliseras innan det ersätter nuvarande data.</p><label>JSON<textarea rows="10" value={pasteText} onChange={(event) => setPasteText(event.target.value)} placeholder={'{"schemaVersion": 4, …}'} autoFocus /></label><button className="primary-button" disabled={!pasteText.trim()}>Importera och ersätt</button></form></Modal>}
   </div>;
 }

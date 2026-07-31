@@ -324,6 +324,10 @@ input[type="color"] { padding: 5px; min-height: 43px; }
 .workout-type-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 5px; }
 .workout-type-grid button { border: 1px solid var(--line); border-radius: 9px; background: #10141a; color: var(--muted); padding: 8px 3px; font-size: 9px; }
 .workout-type-grid button.active { background: var(--blue); color: #07121a; border-color: var(--blue); font-weight: 800; }
+.template-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.template-card { min-width: 0; padding: 13px; text-align: left; display: grid; gap: 7px; }
+.template-card strong { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.template-card small { color: var(--muted); font-size: 8px; }
 .exercise-editor { display: flex; flex-direction: column; gap: 8px; }
 .exercise-edit-row { padding: 12px; border: 1px solid var(--line); border-radius: 13px; background: #11151b; }
 .exercise-edit-row > .row-between { margin-bottom: 8px; }
@@ -521,6 +525,56 @@ input[type="range"] { padding: 0; border: 0; accent-color: var(--green); backgro
 .sleep-form { margin-top: 10px; padding: 17px; }
 .sleep-form .primary-button { display: flex; justify-content: center; align-items: center; gap: 7px; }
 .sleep-search { margin-bottom: 10px; }
+.sleep-method { display: flex; gap: 12px; margin-top: 9px; padding: 15px; color: var(--blue); }
+.sleep-method > div { display: grid; gap: 5px; }
+.sleep-method p { margin: 0 0 4px; color: var(--muted); font-size: 9px; line-height: 1.5; }
+.sleep-method small { color: var(--muted); font-size: 8px; }
+
+.nutrition-strategy { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; margin-bottom: 10px; padding: 15px; border-color: rgba(244,114,182,.28); }
+.nutrition-strategy > div:first-child { display: grid; gap: 4px; }
+.nutrition-strategy strong { font: 800 16px var(--mono); }
+.nutrition-strategy small { color: var(--muted); font-size: 8px; }
+.nutrition-strategy > div:last-child { display: grid; grid-template-columns: auto auto; gap: 3px 7px; }
+.nutrition-strategy b { color: #f472b6; font: 700 9px var(--mono); }
+.nutrition-strategy span { color: var(--muted); font-size: 7px; }
+.meal-library { display: grid; gap: 9px; }
+.meal-library article { padding: 15px; }
+.meal-library .row-between span { color: #f472b6; font-size: 9px; }
+.meal-library p { margin: 8px 0 0; color: var(--muted); font-size: 9px; }
+.nutrition-rules { margin-top: 9px; padding: 15px; }
+.nutrition-rules p { margin: 6px 0 0; color: var(--muted); font-size: 9px; line-height: 1.55; }
+
+.study-blocks { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin-bottom: 10px; }
+.study-blocks article { padding: 13px; display: grid; gap: 6px; }
+.study-blocks span { color: var(--blue); font: 800 9px var(--mono); }
+.study-blocks strong { font-size: 9px; line-height: 1.4; }
+.study-blocks > p { grid-column: 1/-1; margin: 0 4px; color: var(--muted); font-size: 8px; }
+
+.monthly-plan { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 1px; margin-bottom: 13px; padding: 0; overflow: hidden; }
+.monthly-plan > div { min-width: 0; padding: 12px 8px; border-right: 1px solid var(--line); }
+.monthly-plan > div:last-of-type { border-right: 0; }
+.monthly-plan span { display: block; color: var(--muted); font: 700 7px var(--mono); }
+.monthly-plan strong { display: block; margin-top: 5px; font: 800 clamp(9px,2.7vw,13px) var(--mono); white-space: nowrap; }
+.monthly-plan .accent strong { color: var(--green); }
+.monthly-plan p { grid-column: 1/-1; margin: 0; padding: 9px 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 8px; }
+
+.schedule-list { padding: 5px 14px; }
+.schedule-list article { display: grid; grid-template-columns: 92px 1fr; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.schedule-list article:last-child { border-bottom: 0; }
+.schedule-list time { color: var(--green); font: 700 9px var(--mono); }
+.schedule-list article > div { display: grid; gap: 3px; }
+.schedule-list strong { font-size: 10px; }
+.schedule-list small { color: var(--muted); font-size: 8px; }
+.week-system-grid { display: grid; gap: 7px; }
+.week-system-grid article { display: grid; grid-template-columns: 38px 1fr; gap: 4px 10px; padding: 13px; align-items: center; }
+.week-system-grid span { grid-row: 1/3; color: var(--green); font: 800 9px var(--mono); }
+.week-system-grid strong { font-size: 10px; }
+.week-system-grid small { color: var(--muted); font-size: 8px; }
+.anchor-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.anchor-grid article { padding: 14px; }
+.anchor-grid p { margin: 8px 0 0; color: var(--muted); font-size: 8px; line-height: 1.45; }
+.productivity-card { display: flex; gap: 11px; margin-top: 8px; padding: 14px; color: var(--green); }
+.productivity-card p { margin: 4px 0 0; color: var(--muted); font-size: 9px; line-height: 1.5; }
 
 .history-tools { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 10px; }
 .history-tools select { width: auto; max-width: 135px; font-size: 10px; }
@@ -564,6 +618,9 @@ input[type="range"] { padding: 0; border: 0; accent-color: var(--green); backgro
 .backup-action { padding: 16px; text-align: left; display: grid; gap: 8px; color: var(--green); }
 .backup-action strong { color: #eef1f5; font-size: 12px; }
 .backup-action small { color: var(--muted); line-height: 1.4; }
+.backup-paste { grid-column: 1/-1; grid-template-columns: auto 1fr; align-items: center; }
+.backup-paste svg { grid-row: 1/3; }
+.paste-help { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .settings-message { margin-top: 9px; }
 .danger-zone { margin-top: 32px; padding: 18px; border-color: rgba(240,112,74,.38); background: linear-gradient(145deg,rgba(70,25,20,.22),var(--panel)); }
