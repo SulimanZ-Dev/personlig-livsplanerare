@@ -6,9 +6,14 @@ export function MoreView({ onNavigate, state }) {
     ["habits", "check", "Rutiner", "Never zero och two-miss"],
     ["gym", "dumbbell", "Gym", "Pass och progressiv överbelastning"],
     ["studies", "book", "Studier", "Deep work och veckotid"],
+    ["nutrition", "nutrition", "Nutrition", "TDEE, underskott och protein"],
+    ["sleep", "moon", "Sömn", "Rytm, kvalitet och vilopuls"],
     ["reviews", "review", "Review", "Vecka, månad och kvartal"],
     ["dashboardSettings", "home", "Hemskärmens layout", "Visa, dölj och ordna widgets"],
     ["activity", "pulse", "All historik", "Se varje förändring över tid"],
+    ["statistics", "chart", "Veckotrender", "Statistik från alla moduler samlat"],
+    ["rules", "shield", "Systemkarta", "Faser och underhållsregler"],
+    ["settings", "sun", "Inställningar", "Tema, backup, onboarding och reset"],
     ["account", "user", "Konto & synk", "Samma data på alla enheter"],
   ];
   return (

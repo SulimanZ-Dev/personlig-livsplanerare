@@ -6,6 +6,7 @@ const actions = [
   ["gym", "dumbbell", "Gympass", "Spara set, reps och belastning."],
   ["studies", "clock", "Deep work", "Starta en fokuserad studiesession."],
   ["habits", "check", "Daglig rutin", "Håll never-zero-kedjan levande."],
+  ["nutrition", "nutrition", "Nutrition", "Räkna eller uppdatera viktplanen."],
   ["reviews", "review", "Reflektion", "Vecko-, månads- eller kvartalsreview."],
 ];
 

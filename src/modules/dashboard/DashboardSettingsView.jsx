@@ -1,11 +1,12 @@
-import { MODULE_REGISTRY } from "../../app/moduleRegistry";
+import { availableModules } from "../../app/moduleRegistry";
 import { Icon } from "../../components/ui/Icon";
 
 const orderedModules = (state) => {
-  const knownIds = new Set(MODULE_REGISTRY.map((module) => module.id));
+  const modules = availableModules(state);
+  const knownIds = new Set(modules.map((module) => module.id));
   const preferred = (state.dashboard.widgetOrder || []).filter((id) => knownIds.has(id));
-  const remaining = MODULE_REGISTRY.map((module) => module.id).filter((id) => !preferred.includes(id));
-  return [...preferred, ...remaining].map((id) => MODULE_REGISTRY.find((module) => module.id === id));
+  const remaining = modules.map((module) => module.id).filter((id) => !preferred.includes(id));
+  return [...preferred, ...remaining].map((id) => modules.find((module) => module.id === id));
 };
 
 export function DashboardSettingsView({ state, onToggle, onMove }) {

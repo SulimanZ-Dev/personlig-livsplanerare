@@ -1,9 +1,11 @@
 import { getGoalProgress, getGoalStatus, getNextAction } from "./goalEngine";
 import { localISO } from "../dates/dateUtils";
+import { isContingencyDay } from "../attention/attentionEngine";
 
 const priority = { overdue: 0, lost: 1, at_risk: 2, on_track: 3, active: 4, achieved: 5 };
 
 export function buildTodayPlan(state, date = localISO()) {
+  const floorMode = isContingencyDay(state, date);
   const actions = Object.values(state.goals)
     .filter((goal) => goal.status !== "archived")
     .map((goal) => {
@@ -13,7 +15,7 @@ export function buildTodayPlan(state, date = localISO()) {
         id: `goal:${goal.id}:${date}`,
         goalId: goal.id,
         title: goal.name,
-        detail: getNextAction(state, goal),
+        detail: floorMode ? `Floor-läge: ${goal.floorAction || goal.actionLabel || "gör minsta möjliga nästa steg i två minuter"}` : getNextAction(state, goal),
         color: goal.color,
         status,
         progress,
@@ -30,7 +32,9 @@ export function buildTodayPlan(state, date = localISO()) {
       id: `habit:${habit.id}:${date}`,
       habitId: habit.id,
       title: habit.name,
-      detail: completed ? "Klart för idag." : "Never zero: gör minsta möjliga version.",
+      detail: completed ? "Klart för idag." : floorMode
+        ? `Floor-läge: ${habit.minimumVersion || "gör två minuter"}.`
+        : `Never zero: ${habit.minimumVersion || "gör minsta möjliga version"}.`,
       color: habit.color,
       status: { id: completed ? "achieved" : "active", label: completed ? "Klar" : "Idag", tone: completed ? "positive" : "neutral" },
       completed,
@@ -41,6 +45,7 @@ export function buildTodayPlan(state, date = localISO()) {
   return [...actions, ...habitActions];
 }
 export function coachMessage(state, actions) {
+  if (isContingencyDay(state)) return "Contingency-läget är aktivt. Floor-versionerna är planen idag — allt extra är bonus.";
   const overdue = actions.filter((action) => action.status.id === "overdue").length;
   const atRisk = actions.filter((action) => ["at_risk", "lost"].includes(action.status.id)).length;
   const completed = actions.filter((action) => action.completed).length;

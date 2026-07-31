@@ -64,19 +64,38 @@ function migrateLegacyEconomy(legacy) {
 
 export function normalizeState(input) {
   if (!input) return createInitialState();
-  if (input.schemaVersion === 2) {
+  if (input.schemaVersion >= 2) {
     const base = createInitialState();
     return {
       ...base,
       ...input,
-      profile: { ...base.profile, ...input.profile },
+      schemaVersion: 4,
+      profile: {
+        ...base.profile,
+        ...input.profile,
+        quietIndicatorsEnabled: input.profile?.quietIndicatorsEnabled ?? input.profile?.notificationsEnabled ?? true,
+      },
       dashboard: { ...base.dashboard, ...input.dashboard },
       today: { ...base.today, ...input.today },
       modules: {
         ...base.modules,
         ...input.modules,
+        economy: { ...base.modules.economy, ...input.modules?.economy },
+        gym: { ...base.modules.gym, ...input.modules?.gym },
+        habits: { ...base.modules.habits, ...input.modules?.habits },
+        studies: { ...base.modules.studies, ...input.modules?.studies },
+        reviews: { ...base.modules.reviews, ...input.modules?.reviews },
+        nutrition: { ...base.modules.nutrition, ...input.modules?.nutrition },
+        sleep: { ...base.modules.sleep, ...input.modules?.sleep },
         personal: { ...base.modules.personal, ...input.modules?.personal },
       },
+      contingency: {
+        ...base.contingency,
+        ...input.contingency,
+        definitions: input.contingency?.definitions || base.contingency.definitions,
+        history: input.contingency?.history || [],
+      },
+      referenceRules: input.referenceRules || [],
       activity: input.activity || [],
       meta: { ...base.meta, ...input.meta },
     };

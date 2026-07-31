@@ -13,6 +13,10 @@ En mobile-first, local-first personlig livsplanerare med samma mörka terminalk�
 - Rutiner med never-zero, minsta version och two-miss-regel
 - Deep-work-timer med veckosummering
 - Vecko-, månads- och kvartalsreview med framåt/bakåt/stilla-insikter
+- Publik nutrition-kalkylator med TDEE, underskott, protein och coach-varningar
+- Full transaktions-CRUD med omräknade saldon, sökning och en nivås undo
+- Förstagångs-onboarding, säker lokal/moln-reset och JSON-backup/import
+- Samlade sexveckorstrender, ljust tema och lokala PWA-notiser
 - Offline-PWA och automatisk uppdatering när en ny version publiceras
 - Gratis kontosynk via Firebase Authentication och Firestore
 - Windows-klient som använder samma liveversion som webbappen
@@ -34,6 +38,9 @@ src/
     gym/
     habits/
     reviews/
+    nutrition/
+    settings/
+    statistics/
     studies/
   components/          delade UI- och målkomponenter
 ```
