@@ -8,12 +8,20 @@ const definitions = [
   { key: "workouts", label: "Gympass", unit: "pass", color: "#5eb1ff", icon: "dumbbell" },
   { key: "habitChecks", label: "Rutiner", unit: "check", color: "#f0b429", icon: "check" },
   { key: "goalLogs", label: "Målloggar", unit: "loggar", color: "#3ddc84", icon: "target" },
+  { key: "nutritionDays", label: "Kostlogg", unit: "dagar", color: "#f472b6", icon: "nutrition" },
+  { key: "proteinAverage", label: "Proteinsnitt", unit: "g/dag", color: "#5eb1ff", icon: "pulse" },
 ];
 
 const kpiCurrent = (state, kpi) => {
   if (kpi.source === "study_weekly") return state.modules.studies.sessions.filter((item) => isThisWeek(item.startedAt)).reduce((sum, item) => sum + item.durationMinutes, 0) / 60;
   if (kpi.source === "gym_weekly") return state.modules.gym.workouts.filter((item) => isThisWeek(item.date)).length;
   if (kpi.source === "economy_total") return economyTotal(state.modules.economy);
+  if (kpi.source === "nutrition_days") return new Set((state.modules.nutrition.intakeLogs || []).filter((item) => isThisWeek(item.date)).map((item) => item.date)).size;
+  if (kpi.source === "nutrition_protein") {
+    const entries = (state.modules.nutrition.intakeLogs || []).filter((item) => isThisWeek(item.date));
+    const days = new Set(entries.map((item) => item.date)).size;
+    return days ? entries.reduce((sum, item) => sum + (Number(item.protein) || 0), 0) / days : null;
+  }
   if (kpi.source?.startsWith("measurement:")) {
     const type = kpi.source.split(":")[1];
     return state.modules.personal.measurements.filter((entry) => entry.type === type).slice().sort((a, b) => String(a.date).localeCompare(String(b.date))).at(-1)?.value;

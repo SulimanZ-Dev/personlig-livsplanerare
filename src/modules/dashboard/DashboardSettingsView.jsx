@@ -1,5 +1,6 @@
 import { availableModules } from "../../app/moduleRegistry";
 import { Icon } from "../../components/ui/Icon";
+import { QUICK_NAV } from "../../components/layout/AppShell";
 
 const orderedModules = (state) => {
   const modules = availableModules(state);
@@ -9,7 +10,7 @@ const orderedModules = (state) => {
   return [...preferred, ...remaining].map((id) => modules.find((module) => module.id === id));
 };
 
-export function DashboardSettingsView({ state, onToggle, onMove }) {
+export function DashboardSettingsView({ state, onToggle, onMove, onToggleQuickNav }) {
   const modules = orderedModules(state);
   return (
     <div className="page">
@@ -21,20 +22,22 @@ export function DashboardSettingsView({ state, onToggle, onMove }) {
 
       <div className="widget-settings-list">
         {modules.map((module, index) => {
-          const visible = !state.dashboard.hiddenWidgetIds.includes(module.id);
+          const visible = state.dashboard.widgetOrder.includes(module.id) && !state.dashboard.hiddenWidgetIds.includes(module.id);
           return (
             <article className={`card widget-setting-row ${visible ? "" : "muted"}`} key={module.id}>
               <span className="more-icon" style={{ color: module.color }}><Icon name={module.icon} /></span>
               <div><strong>{module.label}</strong><small>{visible ? module.detail(state) : "Dold från hemskärmen"}</small></div>
               <div className="widget-controls">
                 <button aria-label={`${visible ? "Dölj" : "Visa"} ${module.label}`} className={visible ? "active" : ""} onClick={() => onToggle(module.id)}><Icon name={visible ? "check" : "plus"} size={15} /></button>
-                <button aria-label={`Flytta ${module.label} upp`} disabled={index === 0} onClick={() => onMove(module.id, -1)}><Icon name="arrowUp" size={15} /></button>
-                <button aria-label={`Flytta ${module.label} ned`} disabled={index === modules.length - 1} onClick={() => onMove(module.id, 1)}><Icon name="arrowDown" size={15} /></button>
+                <button aria-label={`Flytta ${module.label} upp`} disabled={!visible || index === 0} onClick={() => onMove(module.id, -1)}><Icon name="arrowUp" size={15} /></button>
+                <button aria-label={`Flytta ${module.label} ned`} disabled={!visible || index === modules.length - 1} onClick={() => onMove(module.id, 1)}><Icon name="arrowDown" size={15} /></button>
               </div>
             </article>
           );
         })}
       </div>
+
+      <section className="section"><div className="section-title"><span>SIDOMENY & SNABBÅTKOMST</span><small>dator + Mer</small></div><div className="shortcut-settings-grid">{QUICK_NAV.map(([id, icon, label]) => { const active = state.dashboard.quickNavIds?.includes(id); return <button className={`card shortcut-setting ${active ? "active" : ""}`} key={id} onClick={() => onToggleQuickNav(id)}><Icon name={icon} size={17} /><span>{label}</span><Icon name={active ? "check" : "plus"} size={14} /></button>; })}</div></section>
 
       <aside className="storage-note card">
         <Icon name="pin" />

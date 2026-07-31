@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Icon } from "../../components/ui/Icon";
 import { ACTIVITY_LEVELS, calculateNutritionPlan, hasHeavyRecentWorkout } from "./nutritionModel";
+import { NutritionDiary } from "./NutritionDiary";
 
 const initialForm = {
   weight: "80",
@@ -15,7 +16,7 @@ const initialForm = {
 
 const calories = (value) => `${Number(value).toLocaleString("sv-SE")} kcal`;
 
-export function NutritionView({ state, onSaveCalculation, onCreateGoal }) {
+export function NutritionView({ state, onSaveCalculation, onCreateGoal, onSaveIntake, onDeleteIntake }) {
   const latestId = state.modules.nutrition.latestCalculationId;
   const latest = state.modules.nutrition.calculations.find((item) => item.id === latestId) || state.modules.nutrition.calculations.at(-1);
   const profileDefaults = state.modules.nutrition.profile || {};
@@ -24,6 +25,7 @@ export function NutritionView({ state, onSaveCalculation, onCreateGoal }) {
     return { ...initialForm, ...Object.fromEntries(Object.entries(values).map(([key, value]) => [key, value === null || value === undefined || key === "targetWeight" && Number(value) === 0 ? "" : String(value)])) };
   });
   const [result, setResult] = useState(latest || null);
+  const [mode, setMode] = useState("diary");
   const heavyTraining = useMemo(() => hasHeavyRecentWorkout(state.modules.gym.workouts), [state.modules.gym.workouts]);
   const field = (key) => (event) => setForm((current) => ({ ...current, [key]: event.target.value }));
 
@@ -36,7 +38,11 @@ export function NutritionView({ state, onSaveCalculation, onCreateGoal }) {
 
   return (
     <div className="page nutrition-page">
-      <header className="page-header nutrition-hero"><div className="eyebrow">PUBLIK KALKYLATOR · INGET KONTO KRÄVS</div><h1>Kalorier med omdöme</h1><p>Räkna på energi, takt och protein — med varningar när matematiken blir sämre än planen.</p></header>
+      <header className="page-header nutrition-hero"><div className="eyebrow">KOST · ENERGI · ÅTERHÄMTNING</div><h1>Nutrition</h1><p>Logga det du äter, följ dagens makron och använd kalkylatorn när planen behöver justeras.</p></header>
+      <div className="nutrition-mode-tabs" role="tablist" aria-label="Nutrition-vy"><button role="tab" aria-selected={mode === "diary"} className={mode === "diary" ? "active" : ""} onClick={() => setMode("diary")}><Icon name="nutrition" size={16} /> Dagbok</button><button role="tab" aria-selected={mode === "calculator"} className={mode === "calculator" ? "active" : ""} onClick={() => setMode("calculator")}><Icon name="chart" size={16} /> Kalkylator</button></div>
+
+      {mode === "diary" ? <NutritionDiary nutrition={state.modules.nutrition} onSave={onSaveIntake} onDelete={onDeleteIntake} /> : <>
+      <aside className="calculator-intro card"><Icon name="shield" /><div><strong>Publik kalkylator · inget konto krävs</strong><p>Räkna på TDEE, takt och protein med coachvarningar när underskottet blir för aggressivt.</p></div></aside>
 
       {profileDefaults.proteinMin && <section className="card nutrition-strategy"><div><span className="eyebrow">DIN NUTRITION-RAM</span><strong>{profileDefaults.proteinMin}–{profileDefaults.proteinMax} g protein</strong><small>{profileDefaults.waterLiters} L vatten · måttligt underskott</small></div><div><b>{profileDefaults.mealTimes?.breakfast}</b><span>frukost</span><b>{profileDefaults.mealTimes?.lunch}</b><span>lunch</span><b>{profileDefaults.mealTimes?.dinner}</b><span>middag</span></div></section>}
 
@@ -60,6 +66,7 @@ export function NutritionView({ state, onSaveCalculation, onCreateGoal }) {
         <p className="nutrition-disclaimer">Beräkningen är en uppskattning, inte medicinsk rådgivning. Justera från verklig vikttrend och sök professionell hjälp vid sjukdom, graviditet eller ätproblematik.</p>
       </section>}
       {state.modules.nutrition.mealLibrary?.length > 0 && <section className="section"><div className="section-title"><span>REPEAT MEALS</span><small>rotera var {profileDefaults.rotationWeeks} vecka</small></div><div className="meal-library">{state.modules.nutrition.mealLibrary.map((meal) => <article className="card" key={meal.meal}><div className="row-between"><strong>{meal.meal}</strong><span className="mono">{meal.time}</span></div>{meal.options.map((option) => <p key={option}>→ {option}</p>)}</article>)}</div>{profileDefaults.supplements?.length > 0 && <aside className="card nutrition-rules"><strong>Ramar</strong><p>{profileDefaults.supplements.join(" · ")} · ingen {profileDefaults.exclusions.join(" / ").toLowerCase()} · burgare/pizza {profileDefaults.burgerPizzaPerMonth}×/månad planerat.</p></aside>}</section>}
+      </>}
     </div>
   );
 }

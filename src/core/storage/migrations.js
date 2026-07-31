@@ -69,7 +69,7 @@ export function normalizeState(input) {
     return {
       ...base,
       ...input,
-      schemaVersion: 4,
+      schemaVersion: 5,
       profile: {
         ...base.profile,
         ...input.profile,
