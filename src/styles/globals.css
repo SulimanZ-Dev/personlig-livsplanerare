@@ -300,15 +300,29 @@ input[type="color"] { padding: 5px; min-height: 43px; }
 .economy-hero { margin-bottom: 16px; }
 .account-scroll { display: flex; gap: 9px; overflow-x: auto; padding: 2px 1px 10px; scrollbar-width: none; }
 .account-live-card, .add-account-card { flex: 0 0 150px; min-height: 112px; padding: 14px; text-align: left; }
+.account-live-card { flex-basis: 184px; }
 .account-live-card .status-dot { background: var(--account-color); }
 .account-live-card small { color: var(--muted); font-size: 9px; }
-.account-live-card strong { display: block; margin: 15px 0 5px; font: 700 16px var(--mono); }
+.account-live-card strong { display: block; margin: 13px 0 5px; font: 700 16px var(--mono); }
 .account-live-card > span { color: var(--muted); font-size: 8px; }
+.account-card-top, .account-card-top > span { display: flex; align-items: center; }
+.account-card-top { justify-content: space-between; gap: 8px; }
+.account-card-top > span:first-child { min-width: 0; gap: 6px; }
+.account-card-top small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.account-card-actions { flex: none; gap: 3px; }
+.account-card-actions button { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--muted); }
+.account-card-actions button:hover, .account-card-actions button:focus-visible { color: var(--green); border-color: var(--line); background: var(--panel-2); }
+.account-card-actions button:last-child:hover, .account-card-actions button:last-child:focus-visible { color: var(--red); }
+.account-balance-note { margin: -3px 0 5px; color: var(--muted); font-size: 8px; line-height: 1.45; }
+.account-delete-confirm ul { margin: 0; padding: 12px 12px 12px 28px; border: 1px solid rgba(240,112,74,.2); border-radius: 12px; background: rgba(240,112,74,.06); }
+.account-delete-confirm li { margin: 5px 0; color: var(--muted); font-size: 9px; line-height: 1.45; }
+.undo-note { color: var(--blue); font-size: 9px; line-height: 1.45; }
 .add-account-card { color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border-style: dashed; }
 .economy-actions { display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; }
 .transaction-types { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
 .transaction-types button { min-height: 65px; border-radius: 12px; border: 1px solid var(--line); background: #10141a; color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font-size: 9px; }
 .transaction-types button.active { color: var(--green); border-color: var(--green); background: rgba(61,220,132,.07); }
+.transaction-types button:disabled, .economy-actions button:disabled { cursor: not-allowed; opacity: .38; }
 .withdraw-button { background: var(--red); color: #1a0804; }
 .transaction-icon { width: 32px !important; min-width: 32px !important; height: 32px; border-radius: 10px; display: grid; place-items: center; color: var(--muted) !important; background: #20262f; }
 .transaction-icon.deposit { color: var(--green) !important; background: rgba(61,220,132,.1); }
