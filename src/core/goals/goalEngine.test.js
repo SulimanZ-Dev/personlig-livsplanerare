@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../storage/schema";
-import { getGoalMovement, getGoalProgress, getGoalStatus, isGoalReached, reconcileGoalAchievements } from "./goalEngine";
+import { getGoalMovement, getGoalProgress, getGoalStatus, isGoalReached, reconcileGoalAchievements, removeGoalFromPlannerState } from "./goalEngine";
 
 const baseGoal = {
   id: "goal-test",
@@ -74,5 +74,18 @@ describe("goal engine", () => {
       affectsBalance: true,
     });
     expect(getGoalMovement(state, goal).id).toBe("backward");
+  });
+
+  it("permanently removes a goal and all of its references", () => {
+    const state = withGoal();
+    state.dashboard.pinnedGoalIds = [baseGoal.id];
+    state.today.completions[`goal:${baseGoal.id}`] = "done";
+    state.today.dismissed[`warning:${baseGoal.id}`] = true;
+    const result = removeGoalFromPlannerState(state, baseGoal.id);
+    expect(result.goals[baseGoal.id]).toBeUndefined();
+    expect(Object.values(result.goalEntries)).toEqual([]);
+    expect(result.dashboard.pinnedGoalIds).toEqual([]);
+    expect(result.today.completions).toEqual({});
+    expect(result.today.dismissed).toEqual({});
   });
 });

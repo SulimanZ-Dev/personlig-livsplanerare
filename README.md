@@ -15,6 +15,10 @@ En mobile-first, local-first personlig livsplanerare med samma mörka terminalk�
 - Vecko-, månads- och kvartalsreview med framåt/bakåt/stilla-insikter
 - Publik nutrition-kalkylator med TDEE, underskott, protein och coach-varningar
 - Full transaktions-CRUD med omräknade saldon, sökning och en nivås undo
+- Komplett kostdagbok med kalorier, protein, kolhydrater, fett, fiber, måltider och kosttillskott
+- Snabbregistrering från tidigare intag, dagsmål för makron och nutritionstrender per vecka
+- Valbara dashboard-widgets och snabbgenvägar i datorns sidomeny och mobilens Mer-vy
+- Permanent målradering med bekräftelse, referensstädning och undo
 - Förstagångs-onboarding, säker lokal/moln-reset och JSON-backup/import
 - Samlade sexveckorstrender, ljust tema och tysta UI-indikatorer utan pushspam
 - Generisk fasmotor, contingency/floor-läge, fri cert-roadmap och länkade systemregler

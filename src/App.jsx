@@ -5,6 +5,7 @@ import { GoalsView } from "./components/goals/GoalsView";
 import { QuickGoalUpdate } from "./components/goals/QuickGoalUpdate";
 import { AppShell } from "./components/layout/AppShell";
 import { localISO } from "./core/dates/dateUtils";
+import { removeGoalFromPlannerState } from "./core/goals/goalEngine";
 import { useAppStorage } from "./core/storage/useAppStorage";
 import { useAuth } from "./core/sync/AuthContext";
 import { availableModules } from "./app/moduleRegistry";
@@ -20,6 +21,7 @@ import { removeAccountFromPlannerState, removeTransaction, transactionTouchesAcc
 import { GymView } from "./modules/gym/GymView";
 import { HabitsView } from "./modules/habits/HabitsView";
 import { NutritionView } from "./modules/nutrition/NutritionView";
+import { removeNutritionEntry, upsertNutritionEntry } from "./modules/nutrition/nutritionModel";
 import { ReviewsView } from "./modules/reviews/ReviewsView";
 import { SettingsView } from "./modules/settings/SettingsView";
 import { StudiesView } from "./modules/studies/StudiesView";
@@ -103,11 +105,13 @@ export default function App() {
 
   const toggleWidget = (id) => update((current) => {
     const hidden = current.dashboard.hiddenWidgetIds.includes(id);
+    const configured = current.dashboard.widgetOrder.includes(id);
     return {
       ...current,
       dashboard: {
         ...current.dashboard,
-        hiddenWidgetIds: hidden
+        widgetOrder: configured ? current.dashboard.widgetOrder : [...current.dashboard.widgetOrder, id],
+        hiddenWidgetIds: !configured || hidden
           ? current.dashboard.hiddenWidgetIds.filter((widgetId) => widgetId !== id)
           : [...current.dashboard.hiddenWidgetIds, id],
       },
@@ -125,6 +129,17 @@ export default function App() {
     if (index < 0 || nextIndex < 0 || nextIndex >= order.length) return current;
     [order[index], order[nextIndex]] = [order[nextIndex], order[index]];
     return { ...current, dashboard: { ...current.dashboard, widgetOrder: order } };
+  });
+
+  const toggleQuickNav = (id) => update((current) => {
+    const shortcuts = current.dashboard.quickNavIds || [];
+    return {
+      ...current,
+      dashboard: {
+        ...current.dashboard,
+        quickNavIds: shortcuts.includes(id) ? shortcuts.filter((shortcutId) => shortcutId !== id) : [...shortcuts, id],
+      },
+    };
   });
 
   const toggleHabit = (habitId, date = localISO()) => update((current) => {
@@ -164,9 +179,9 @@ export default function App() {
 
   const views = {
     dashboard: <DashboardView state={state} onNavigate={setRoute} onOpenGoal={setGoalEditor} onQuickUpdate={setQuickGoal} onSetContingency={setContingency} onDismissAttention={(id) => update((current) => ({ ...current, today: { ...current.today, dismissed: { ...current.today.dismissed, [id]: true } } }))} />,
-    dashboardSettings: <DashboardSettingsView state={state} onToggle={toggleWidget} onMove={moveWidget} />,
+    dashboardSettings: <DashboardSettingsView state={state} onToggle={toggleWidget} onMove={moveWidget} onToggleQuickNav={toggleQuickNav} />,
     today: <TodayView state={state} onToggle={toggleToday} onDismiss={(id) => update((current) => ({ ...current, today: { ...current.today, dismissed: { ...current.today.dismissed, [id]: true } } }))} onOpenGoal={setGoalEditor} />,
-    goals: <GoalsView state={state} onCreate={() => setGoalEditor("new")} onEdit={setGoalEditor} onQuickUpdate={setQuickGoal} onChecklist={toggleChecklist} onArchive={archiveGoal} onPin={togglePin} onMovePin={movePin} />,
+    goals: <GoalsView state={state} onCreate={() => setGoalEditor("new")} onEdit={setGoalEditor} onQuickUpdate={setQuickGoal} onChecklist={toggleChecklist} onArchive={archiveGoal} onDelete={(goal) => update((current) => removeGoalFromPlannerState(current, goal.id), activity("goal", `Mål raderat: ${goal.name}`, `${Object.values(state.goalEntries).filter((entry) => entry.goalId === goal.id).length} progressposter togs bort · kan ångras`))} onPin={togglePin} onMovePin={movePin} />,
     log: <LogView onNavigate={setRoute} />,
     economy: <EconomyView state={state} onCreateGoal={() => setGoalEditor("new")} onOpenGoal={setGoalEditor} onUpsertTransaction={(transaction, editing) => update(
       (current) => ({ ...current, modules: { ...current.modules, economy: { ...current.modules.economy, transactions: upsertTransaction(current.modules.economy.transactions, transaction) } } }),
@@ -191,7 +206,13 @@ export default function App() {
       const session = { ...studies.activeSession, endedAt: new Date().toISOString(), durationMinutes: Math.max(1, Math.round(seconds / 60)) };
       return { ...current, modules: { ...current.modules, studies: { sessions: [...studies.sessions, session], activeSession: null } } };
     }, activity("study", state.modules.studies.activeSession?.subject || "Deep work", `${Math.max(1, Math.round(seconds / 60))} minuter`))} />,
-    nutrition: <NutritionView state={state} onSaveCalculation={(calculation) => update((current) => ({
+    nutrition: <NutritionView state={state} onSaveIntake={(entry, editing) => update((current) => ({
+      ...current,
+      modules: { ...current.modules, nutrition: { ...current.modules.nutrition, intakeLogs: upsertNutritionEntry(current.modules.nutrition.intakeLogs, entry) } },
+    }), activity("nutrition", `${editing ? "Intag ändrat" : entry.kind === "supplement" ? "Tillskott" : "Mat"}: ${entry.name}`, entry.kind === "supplement" ? entry.dose || "Loggat" : `${entry.calories.toLocaleString("sv-SE")} kcal · ${entry.protein} g protein`))} onDeleteIntake={(entry) => update((current) => ({
+      ...current,
+      modules: { ...current.modules, nutrition: { ...current.modules.nutrition, intakeLogs: removeNutritionEntry(current.modules.nutrition.intakeLogs, entry.id) } },
+    }), activity("nutrition", `Intag borttaget: ${entry.name}`, "Dagens makron räknades om · kan ångras"))} onSaveCalculation={(calculation) => update((current) => ({
       ...current,
       modules: { ...current.modules, nutrition: { ...current.modules.nutrition, calculations: [...current.modules.nutrition.calculations, calculation], latestCalculationId: calculation.id } },
     }), activity("nutrition", `Kaloriplan · ${calculation.calorieTarget.toLocaleString("sv-SE")} kcal`, `${calculation.inputs.weeklyRate} kg/vecka · ${calculation.pace.label}`))} onCreateGoal={(calculation) => {
@@ -238,7 +259,7 @@ export default function App() {
   };
 
   return (
-    <AppShell route={route} onNavigate={setRoute} syncStatus={syncStatus}>
+    <AppShell route={route} onNavigate={setRoute} syncStatus={syncStatus} quickNavIds={state.dashboard.quickNavIds}>
       {views[route] || views.dashboard}
       {error && <div className="toast">{error}</div>}
       {goalEditor && <GoalForm state={state} goal={goalEditor === "new" ? null : goalEditor} onSave={saveGoal} onClose={() => setGoalEditor(null)} />}

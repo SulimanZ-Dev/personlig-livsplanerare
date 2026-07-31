@@ -75,3 +75,53 @@ export function hasHeavyRecentWorkout(workouts = [], now = new Date()) {
     return date >= cutoff && sets >= 10 && !String(workout.type || "").toLowerCase().includes("cardio");
   });
 }
+
+const macroKeys = ["calories", "protein", "carbs", "fat", "fiber"];
+
+export function nutritionTotals(entries = [], date = null) {
+  return entries.reduce((totals, entry) => {
+    if (date && entry.date !== date) return totals;
+    macroKeys.forEach((key) => {
+      totals[key] += Number(entry[key]) || 0;
+    });
+    totals.items += 1;
+    if (entry.kind === "supplement") totals.supplements += 1;
+    return totals;
+  }, { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, items: 0, supplements: 0 });
+}
+
+export function nutritionTargets(nutrition = {}) {
+  const latest = nutrition.calculations?.find((item) => item.id === nutrition.latestCalculationId)
+    || nutrition.calculations?.at(-1);
+  const profile = nutrition.profile || {};
+  const calories = Number(latest?.calorieTarget || profile.calorieTarget) || 0;
+  const proteinMin = Number(latest?.protein?.[0] || profile.proteinMin) || 0;
+  const proteinMax = Number(latest?.protein?.[1] || profile.proteinMax) || proteinMin;
+  const weight = Number(latest?.inputs?.weight || profile.weight) || 0;
+  const fat = Number(profile.fatTarget) || (calories && weight ? Math.round(weight * 0.8) : 0);
+  const carbs = Number(profile.carbsTarget) || (calories ? Math.max(0, Math.round((calories - proteinMin * 4 - fat * 9) / 4)) : 0);
+  return { calories, proteinMin, proteinMax, carbs, fat, fiber: Number(profile.fiberTarget) || 30 };
+}
+
+export function macroCalories(entry) {
+  return Math.round((Number(entry.protein) || 0) * 4 + (Number(entry.carbs) || 0) * 4 + (Number(entry.fat) || 0) * 9);
+}
+
+export function upsertNutritionEntry(entries = [], entry) {
+  const exists = entries.some((item) => item.id === entry.id);
+  return exists ? entries.map((item) => item.id === entry.id ? entry : item) : [...entries, entry];
+}
+
+export function removeNutritionEntry(entries = [], entryId) {
+  return entries.filter((entry) => entry.id !== entryId);
+}
+
+export function recentNutritionChoices(entries = [], limit = 6) {
+  const seen = new Set();
+  return entries.slice().sort((a, b) => String(b.occurredAt).localeCompare(String(a.occurredAt))).filter((entry) => {
+    const key = `${entry.kind}:${entry.name.trim().toLocaleLowerCase("sv-SE")}`;
+    if (!entry.name.trim() || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, limit);
+}

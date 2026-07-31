@@ -14,7 +14,7 @@ export const GOAL_TEMPLATES = [
 ];
 
 export const createInitialState = () => ({
-  schemaVersion: 4,
+  schemaVersion: 5,
   profile: {
     displayName: "",
     locale: "sv-SE",
@@ -35,6 +35,7 @@ export const createInitialState = () => ({
     pinnedGoalIds: [],
     hiddenWidgetIds: [],
     widgetOrder: ["economy", "habits", "gym", "studies", "nutrition", "reviews"],
+    quickNavIds: ["nutrition", "economy", "gym", "habits", "studies", "sleep"],
   },
   modules: {
     economy: {
@@ -50,7 +51,7 @@ export const createInitialState = () => ({
     habits: { habits: [], checkIns: [] },
     studies: { sessions: [], activeSession: null, roadmap: [] },
     reviews: { entries: [], templates: {} },
-    nutrition: { calculations: [], latestCalculationId: null, profile: {}, mealLibrary: [] },
+    nutrition: { calculations: [], latestCalculationId: null, profile: {}, mealLibrary: [], intakeLogs: [], supplementLibrary: [] },
     sleep: { logs: [], targetBedtime: "", targetWakeTime: "" },
     personal: {
       measurements: [],

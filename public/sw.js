@@ -1,4 +1,4 @@
-const CACHE = "livssystem-shell-v5";
+const CACHE = "livssystem-shell-v6";
 const SHELL = ["/", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (event) => {

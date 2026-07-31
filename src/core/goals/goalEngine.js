@@ -172,3 +172,25 @@ export function reconcileGoalAchievements(state) {
   }
   return changed ? { ...state, goals } : state;
 }
+
+export function removeGoalFromPlannerState(state, goalId) {
+  if (!state.goals[goalId]) return state;
+  const goals = { ...state.goals };
+  delete goals[goalId];
+  const goalEntries = Object.fromEntries(Object.entries(state.goalEntries || {}).filter(([, entry]) => entry.goalId !== goalId));
+  const withoutGoalKeys = (values = {}) => Object.fromEntries(Object.entries(values).filter(([key]) => !key.includes(goalId)));
+  return {
+    ...state,
+    goals,
+    goalEntries,
+    dashboard: {
+      ...state.dashboard,
+      pinnedGoalIds: state.dashboard.pinnedGoalIds.filter((id) => id !== goalId),
+    },
+    today: {
+      ...state.today,
+      completions: withoutGoalKeys(state.today.completions),
+      dismissed: withoutGoalKeys(state.today.dismissed),
+    },
+  };
+}

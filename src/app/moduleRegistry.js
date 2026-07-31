@@ -3,6 +3,7 @@ import { getTwoMissWarnings } from "../core/attention/attentionEngine";
 import { getPhaseStatus } from "../core/phases/phaseEngine";
 import { getGoalValue } from "../core/goals/goalEngine";
 import { economyTotal } from "../modules/economy/economyModel";
+import { nutritionTargets, nutritionTotals } from "../modules/nutrition/nutritionModel";
 
 const number = (value, options = {}) => new Intl.NumberFormat("sv-SE", options).format(value);
 const measurements = (state, type) => (state.modules.personal?.measurements || [])
@@ -84,10 +85,58 @@ export const MODULE_REGISTRY = [
     icon: "nutrition",
     color: "#f472b6",
     summary: (state) => {
+      const today = nutritionTotals(state.modules.nutrition.intakeLogs, localISO());
+      if (today.items) return `${number(today.calories)} kcal`;
       const latest = state.modules.nutrition.calculations.find((item) => item.id === state.modules.nutrition.latestCalculationId);
       return latest ? `${latest.calorieTarget.toLocaleString("sv-SE")} kcal` : "Beräkna";
     },
-    detail: (state) => state.modules.nutrition.calculations.length ? "dagligt målintag" : "publik kaloriräknare",
+    detail: (state) => {
+      const today = nutritionTotals(state.modules.nutrition.intakeLogs, localISO());
+      return today.items ? `${number(today.protein)} g protein · ${today.items} intag` : state.modules.nutrition.calculations.length ? "dagligt målintag" : "kostlogg + publik kalkylator";
+    },
+  },
+  {
+    id: "nutritionCalories",
+    route: "nutrition",
+    label: "Dagens kalorier",
+    icon: "nutrition",
+    color: "#f472b6",
+    summary: (state) => {
+      const total = nutritionTotals(state.modules.nutrition.intakeLogs, localISO()).calories;
+      const target = nutritionTargets(state.modules.nutrition).calories;
+      return target ? `${number(total)}/${number(target)}` : `${number(total)} kcal`;
+    },
+    detail: (state) => {
+      const total = nutritionTotals(state.modules.nutrition.intakeLogs, localISO()).calories;
+      const target = nutritionTargets(state.modules.nutrition).calories;
+      return target ? `${number(Math.max(0, target - total))} kcal kvar` : "sätt mål i kalkylatorn";
+    },
+  },
+  {
+    id: "nutritionProtein",
+    route: "nutrition",
+    label: "Dagens protein",
+    icon: "pulse",
+    color: "#5eb1ff",
+    summary: (state) => {
+      const total = nutritionTotals(state.modules.nutrition.intakeLogs, localISO()).protein;
+      const target = nutritionTargets(state.modules.nutrition).proteinMin;
+      return target ? `${number(total)}/${number(target)} g` : `${number(total)} g`;
+    },
+    detail: (state) => {
+      const total = nutritionTotals(state.modules.nutrition.intakeLogs, localISO()).protein;
+      const target = nutritionTargets(state.modules.nutrition).proteinMin;
+      return target ? `${number(Math.max(0, target - total))} g kvar` : "kopplas till din kaloriplan";
+    },
+  },
+  {
+    id: "nutritionWeek",
+    route: "nutrition",
+    label: "Kostlogg veckan",
+    icon: "calendar",
+    color: "#f0b429",
+    summary: (state) => `${new Set(state.modules.nutrition.intakeLogs.filter((entry) => isThisWeek(entry.date)).map((entry) => entry.date)).size}/7 dagar`,
+    detail: (state) => `${state.modules.nutrition.intakeLogs.filter((entry) => isThisWeek(entry.date)).length} intag loggade`,
   },
   {
     id: "phase",
@@ -163,7 +212,7 @@ export const MODULE_REGISTRY = [
     label: "Nästa milstolpe",
     icon: "wallet",
     color: "#3ddc84",
-    isAvailable: (state) => state.dashboard.widgetOrder.includes("economyMilestone") && Boolean(activeGoal(state, (goal) => goal.moduleId === "economy")),
+    isAvailable: (state) => Boolean(activeGoal(state, (goal) => goal.moduleId === "economy")),
     summary: (state) => {
       const goal = activeGoal(state, (item) => item.moduleId === "economy");
       return `${Math.max(0, Number(goal.targetValue) - getGoalValue(state, goal)).toLocaleString("sv-SE")} kr kvar`;
@@ -176,7 +225,6 @@ export const MODULE_REGISTRY = [
     label: "Träningsstreak",
     icon: "dumbbell",
     color: "#5eb1ff",
-    isAvailable: (state) => state.dashboard.widgetOrder.includes("gymStreak"),
     summary: (state) => `${workoutWeekStreak(state.modules.gym.workouts)} veckor`,
     detail: (state) => `${state.modules.gym.workouts.filter((workout) => isThisWeek(workout.date)).length} pass denna vecka`,
   },
@@ -186,7 +234,7 @@ export const MODULE_REGISTRY = [
     label: "Veckans studier",
     icon: "book",
     color: "#a78bfa",
-    isAvailable: (state) => state.dashboard.widgetOrder.includes("studyTarget") && Boolean(activeGoal(state, (goal) => goal.source === "study_weekly")),
+    isAvailable: (state) => Boolean(activeGoal(state, (goal) => goal.source === "study_weekly")),
     summary: (state) => {
       const goal = activeGoal(state, (item) => item.source === "study_weekly");
       return `${getGoalValue(state, goal).toLocaleString("sv-SE", { maximumFractionDigits: 1 })}/${goal.targetValue} h`;

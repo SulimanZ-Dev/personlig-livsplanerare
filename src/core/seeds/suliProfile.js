@@ -92,8 +92,8 @@ export function createSuliProfile() {
       { id: "resting-hr", label: "Vilopuls", source: "measurement:resting_hr", externalSource: "Garmin", cadence: "veckovis", unit: "bpm", targetLabel: "trend nedåt", note: "Baseline 85–90" },
       { id: "gym-plan", label: "Pass genomförda vs plan", source: "gym_weekly", externalSource: "TickTick", cadence: "veckovis", unit: "pass", target: 5, note: "4–5 pass" },
       { id: "key-lifts", label: "Nyckellyft-progression", source: "manual", externalSource: "Manuell", cadence: "månadsvis", targetLabel: "positiv trend", note: "Prioritetslyft" },
-      { id: "nutrition-days", label: "Dagar loggade kost", source: "manual", externalSource: "Lifesum", cadence: "veckovis", unit: "dagar", target: 7, note: "Floor: största måltiden" },
-      { id: "protein-average", label: "Proteinsnitt", source: "manual", externalSource: "Lifesum", cadence: "veckovis", unit: "g", targetLabel: "180–200 g", note: "Dagligt snitt" },
+      { id: "nutrition-days", label: "Dagar loggade kost", source: "nutrition_days", externalSource: "Egen app", cadence: "veckovis", unit: "dagar", target: 7, note: "Floor: största måltiden" },
+      { id: "protein-average", label: "Proteinsnitt", source: "nutrition_protein", externalSource: "Egen app", cadence: "veckovis", unit: "g", targetLabel: "180–200 g", note: "Dagligt snitt" },
       { id: "bedtime-consistency", label: "Läggdags-konsistens", source: "manual", externalSource: "Garmin", cadence: "veckovis", targetLabel: "01:00 ±20 min", note: "Upp 09:00 flexar aldrig" },
       { id: "study-hours", label: "Studietimmar vs 40 h", source: "study_weekly", externalSource: "TickTick/manuell", cadence: "veckovis", unit: "h", target: 40, note: "Två deep-work-block" },
       { id: "cert-roadmap", label: "Certs/labs vs roadmap", source: "manual", externalSource: "Manuell", cadence: "månadsvis", target: 9, unit: "steg", note: "Fri ordning" },
@@ -207,6 +207,8 @@ export function createSuliProfile() {
   state.modules.nutrition = {
     calculations: [],
     latestCalculationId: null,
+    intakeLogs: [],
+    supplementLibrary: [],
     profile: { height: 195, weight: 125, targetWeight: "", gender: "male", activity: "moderate", lossType: "fat", weeklyRate: 0.5, goal: "body_composition", proteinMin: 180, proteinMax: 200, waterLiters: "3–4", mealTimes: { breakfast: "09:30", lunch: "14:00", dinner: "22:15" }, rotationWeeks: "4–6", burgerPizzaPerMonth: 2, supplements: ["Proteinpulver", "Kreatin 3–5 g/dag", "Vitamin D"], exclusions: ["Fisk", "Skaldjur", "Alkohol"] },
     mealLibrary: [
       { meal: "Frukost", time: "09:30", options: ["Havregryn + kvarg + bär", "Ägg + fullkornsbröd + frukt", "Proteinshake + banan + havre", "Kvargskål + müsli", "Omelett + potatis", "Keso + frukt + nötter"] },
@@ -274,6 +276,7 @@ export function createSuliProfile() {
     pinnedGoalIds: ["goal-savings", "goal-preprogram", "goal-study-week"],
     hiddenWidgetIds: [],
     widgetOrder: ["phase", "economyMilestone", "gymStreak", "studyTarget", "twoMiss", "certRoadmap", "weightTrend", "restingHeartRate", "nutrition", "sleep", "habits", "reviews", "economy", "gym", "studies"],
+    quickNavIds: ["nutrition", "economy", "gym", "habits", "studies", "sleep", "reviews", "statistics"],
   };
 
   // Startvärden för trendwidgets. De är historikposter, inte hårdkodade UI-siffror.

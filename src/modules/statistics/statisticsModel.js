@@ -18,6 +18,10 @@ export function buildWeeklyTrends(state, count = 6, now = new Date()) {
     const workouts = state.modules.gym.workouts.filter((item) => inRange(item.date, start, end)).length;
     const habitChecks = state.modules.habits.checkIns.filter((item) => item.done && inRange(`${item.date}T12:00:00`, start, end)).length;
     const goalLogs = Object.values(state.goalEntries).filter((item) => inRange(item.occurredAt, start, end)).length;
-    return { start: start.toISOString(), label: start.toLocaleDateString("sv-SE", { day: "numeric", month: "short" }), economyNet, studyHours: Number((studyMinutes / 60).toFixed(1)), workouts, habitChecks, goalLogs };
+    const nutritionEntries = (state.modules.nutrition.intakeLogs || []).filter((item) => inRange(`${item.date}T12:00:00`, start, end));
+    const nutritionDates = [...new Set(nutritionEntries.map((item) => item.date))];
+    const proteinTotal = nutritionEntries.reduce((sum, item) => sum + (Number(item.protein) || 0), 0);
+    const proteinAverage = nutritionDates.length ? Math.round(proteinTotal / nutritionDates.length) : 0;
+    return { start: start.toISOString(), label: start.toLocaleDateString("sv-SE", { day: "numeric", month: "short" }), economyNet, studyHours: Number((studyMinutes / 60).toFixed(1)), workouts, habitChecks, goalLogs, nutritionDays: nutritionDates.length, proteinAverage };
   });
 }

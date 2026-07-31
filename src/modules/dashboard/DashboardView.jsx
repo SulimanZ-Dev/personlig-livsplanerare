@@ -63,7 +63,7 @@ export function DashboardView({ state, onNavigate, onOpenGoal, onQuickUpdate, on
       <section className="section">
         <div className="section-title"><span>DINA OMRÅDEN</span><button onClick={() => onNavigate("dashboardSettings")}>Anpassa</button></div>
         <div className="module-grid">
-          {orderedModules.filter((module) => !state.dashboard.hiddenWidgetIds.includes(module.id)).map((module) => (
+          {orderedModules.filter((module) => moduleOrder.includes(module.id) && !state.dashboard.hiddenWidgetIds.includes(module.id)).map((module) => (
             <button className="card living-module-card" key={module.id} onClick={() => onNavigate(module.route || module.id)} style={{ "--module-color": module.color }}>
               <span className="module-symbol"><Icon name={module.icon} /></span>
               <span className="eyebrow">{module.label}</span>
