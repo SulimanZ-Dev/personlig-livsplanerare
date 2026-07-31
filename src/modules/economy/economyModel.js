@@ -21,6 +21,15 @@ export function economyTotal(economy) {
     .reduce((total, account) => total + accountBalance(economy, account.id), 0);
 }
 
+export function upsertTransaction(transactions = [], transaction) {
+  const exists = transactions.some((item) => item.id === transaction.id);
+  return exists ? transactions.map((item) => item.id === transaction.id ? transaction : item) : [...transactions, transaction];
+}
+
+export function removeTransaction(transactions = [], transactionId) {
+  return transactions.filter((item) => item.id !== transactionId);
+}
+
 export function transactionImpact(transaction, accountId) {
   const amount = Math.abs(Number(transaction.amount) || 0);
   if (transaction.type === "deposit" && transaction.accountId === accountId) return amount;

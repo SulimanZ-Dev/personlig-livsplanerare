@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { accountBalance, economyTotal } from "./economyModel";
+import { accountBalance, economyTotal, removeTransaction, upsertTransaction } from "./economyModel";
 
 const economy = {
   accounts: {
@@ -28,5 +28,15 @@ describe("economy ledger", () => {
   it("does not double count migrated historical transactions", () => {
     const state = { ...economy, transactions: [{ type: "legacy", accountId: "a", amount: 400, affectsBalance: false }] };
     expect(accountBalance(state, "a")).toBe(1000);
+  });
+
+  it("recalculates from the replacement when a transaction is edited", () => {
+    const transactions = upsertTransaction(economy.transactions, { ...economy.transactions[0], amount: 500 });
+    expect(accountBalance({ ...economy, transactions }, "a")).toBe(1050);
+  });
+
+  it("reverses the effect when a transaction is removed", () => {
+    const transactions = removeTransaction(economy.transactions, "2");
+    expect(accountBalance({ ...economy, transactions }, "a")).toBe(1100);
   });
 });

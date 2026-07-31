@@ -13,6 +13,12 @@ En mobile-first, local-first personlig livsplanerare med samma mörka terminalk�
 - Rutiner med never-zero, minsta version och two-miss-regel
 - Deep-work-timer med veckosummering
 - Vecko-, månads- och kvartalsreview med framåt/bakåt/stilla-insikter
+- Publik nutrition-kalkylator med TDEE, underskott, protein och coach-varningar
+- Full transaktions-CRUD med omräknade saldon, sökning och en nivås undo
+- Förstagångs-onboarding, säker lokal/moln-reset och JSON-backup/import
+- Samlade sexveckorstrender, ljust tema och tysta UI-indikatorer utan pushspam
+- Generisk fasmotor, contingency/floor-läge, fri cert-roadmap och länkade systemregler
+- Sömnlogg med vilopuls samt dynamiska vikt-, puls-, milstolpe- och KPI-widgets
 - Offline-PWA och automatisk uppdatering när en ny version publiceras
 - Gratis kontosynk via Firebase Authentication och Firestore
 - Windows-klient som använder samma liveversion som webbappen
@@ -25,6 +31,9 @@ src/
   core/
     dates/             datumhjälpare
     goals/             mål-, status-, prognos- och idagmotor
+    attention/         two-miss och diskreta review-indikatorer
+    phases/            generisk fas- och dagberäkning
+    seeds/             separata personliga seedprofiler
     storage/           schema, migrering och local-first-lagring
     sync/              autentisering och Firestore
   modules/
@@ -34,6 +43,11 @@ src/
     gym/
     habits/
     reviews/
+    nutrition/
+    reference/
+    settings/
+    sleep/
+    statistics/
     studies/
   components/          delade UI- och målkomponenter
 ```
@@ -63,6 +77,16 @@ Windows:
 ```bash
 npm run desktop:build
 ```
+
+## Suli Operating System
+
+Den publika appen är tom från start. Den personliga profilen ligger separat i `src/core/seeds/suliProfile.js` och kan aldrig laddas som publik standarddata. Generera den portabla backupen med:
+
+```bash
+npm run seed:suli
+```
+
+Importera sedan `seeds/suli-operating-system.json` via **Inställningar → Importera backup**. Filen innehåller faser, 90-dagarssprint, ekonomi, passmallar, nutrition, sömn, studie-roadmap, reviews, contingency-regler och KPI-metadata.
 
 ## Publicering
 

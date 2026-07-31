@@ -127,6 +127,7 @@ export function GoalForm({ goal, state, onSave, onClose }) {
               <option value="gym">Gym</option>
               <option value="habits">Rutiner</option>
               <option value="studies">Studier</option>
+              <option value="nutrition">Nutrition</option>
             </select>
           </label>
         </div>

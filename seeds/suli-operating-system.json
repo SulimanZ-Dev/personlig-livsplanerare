@@ -1,0 +1,1298 @@
+{
+  "schemaVersion": 4,
+  "profile": {
+    "displayName": "Suli",
+    "locale": "sv-SE",
+    "weekStartsOn": 1,
+    "coachMode": "direct",
+    "onboardingComplete": true,
+    "theme": "dark",
+    "quietIndicatorsEnabled": true,
+    "phases": [
+      {
+        "id": "foundation-sprint",
+        "name": "Fas 1 – Foundation Sprint",
+        "startDate": "2026-07-13",
+        "endDate": "2026-09-06",
+        "description": "Stabilisera sömn, träning, nutrition, studier och administration före programstart."
+      },
+      {
+        "id": "integration",
+        "name": "Fas 2 – Integration",
+        "startDate": "2026-09-07",
+        "endDate": "2027-06-30",
+        "description": "Integrera utbildning, certifieringar, hälsa och ett hållbart veckosystem."
+      },
+      {
+        "id": "launch",
+        "name": "Fas 3 – Launch",
+        "startDate": "2027-07-01",
+        "endDate": "2028-07-31",
+        "description": "Omsätt systemet i LIA, karriär, portfölj och långsiktig självständighet."
+      }
+    ],
+    "schedule": [
+      {
+        "time": "09:00",
+        "endTime": "09:00",
+        "label": "Uppvakning",
+        "detail": "Fast ankare, även helger"
+      },
+      {
+        "time": "09:00",
+        "endTime": "09:30",
+        "label": "Morgonrutin",
+        "detail": "Vatten, lätt stretch, inget mobilscroll"
+      },
+      {
+        "time": "09:30",
+        "endTime": "10:00",
+        "label": "Frukost + dagsgenomgång",
+        "detail": "TickTick: dagens tre studieuppgifter"
+      },
+      {
+        "time": "10:00",
+        "endTime": "13:30",
+        "label": "Studieblock 1",
+        "detail": "Djupt fokus, svåraste materialet"
+      },
+      {
+        "time": "13:30",
+        "endTime": "14:00",
+        "label": "Paus",
+        "detail": "Promenad"
+      },
+      {
+        "time": "14:00",
+        "endTime": "15:00",
+        "label": "Lunch",
+        "detail": "Repeat meal"
+      },
+      {
+        "time": "15:00",
+        "endTime": "18:30",
+        "label": "Studieblock 2",
+        "detail": "Labs och hands-on"
+      },
+      {
+        "time": "18:30",
+        "endTime": "19:30",
+        "label": "Buffert / admin",
+        "detail": "KGYH, mail, praktiskt"
+      },
+      {
+        "time": "19:30",
+        "endTime": "20:00",
+        "label": "Resa till gym",
+        "detail": "Mentalt skifte"
+      },
+      {
+        "time": "20:00",
+        "endTime": "21:30",
+        "label": "Gym",
+        "detail": "Planerat pass eller floor"
+      },
+      {
+        "time": "21:30",
+        "endTime": "21:50",
+        "label": "Bastu",
+        "detail": "Dagligt återhämtningsankare"
+      },
+      {
+        "time": "21:50",
+        "endTime": "22:15",
+        "label": "Resa hem + dusch",
+        "detail": "Nedväxling"
+      },
+      {
+        "time": "22:15",
+        "endTime": "23:00",
+        "label": "Middag",
+        "detail": "Post-gym, dagens högsta protein"
+      },
+      {
+        "time": "23:00",
+        "endTime": "00:30",
+        "label": "Fri tid",
+        "detail": "Skyddad"
+      },
+      {
+        "time": "00:30",
+        "endTime": "01:00",
+        "label": "Nedvarvning",
+        "detail": "Mobil bort, dimmat ljus"
+      },
+      {
+        "time": "01:00",
+        "endTime": "09:00",
+        "label": "Sömn",
+        "detail": "Åtta timmar"
+      }
+    ],
+    "anchors": {
+      "morning": [
+        "09:00 · vatten",
+        "5–10 min mobility",
+        "TickTick-koll: dagens tre"
+      ],
+      "evening": [
+        "Mobil på laddare",
+        "Kort dagsnotis",
+        "Morgondagens tre uppgifter"
+      ]
+    },
+    "kpis": [
+      {
+        "id": "weight-trend",
+        "label": "Vikttrend",
+        "source": "measurement:weight",
+        "externalSource": "Garmin/manuell",
+        "cadence": "veckovis",
+        "unit": "kg",
+        "targetLabel": "trend, ej fast mål",
+        "note": "Veckomedel"
+      },
+      {
+        "id": "resting-hr",
+        "label": "Vilopuls",
+        "source": "measurement:resting_hr",
+        "externalSource": "Garmin",
+        "cadence": "veckovis",
+        "unit": "bpm",
+        "targetLabel": "trend nedåt",
+        "note": "Baseline 85–90"
+      },
+      {
+        "id": "gym-plan",
+        "label": "Pass genomförda vs plan",
+        "source": "gym_weekly",
+        "externalSource": "TickTick",
+        "cadence": "veckovis",
+        "unit": "pass",
+        "target": 5,
+        "note": "4–5 pass"
+      },
+      {
+        "id": "key-lifts",
+        "label": "Nyckellyft-progression",
+        "source": "manual",
+        "externalSource": "Manuell",
+        "cadence": "månadsvis",
+        "targetLabel": "positiv trend",
+        "note": "Prioritetslyft"
+      },
+      {
+        "id": "nutrition-days",
+        "label": "Dagar loggade kost",
+        "source": "manual",
+        "externalSource": "Lifesum",
+        "cadence": "veckovis",
+        "unit": "dagar",
+        "target": 7,
+        "note": "Floor: största måltiden"
+      },
+      {
+        "id": "protein-average",
+        "label": "Proteinsnitt",
+        "source": "manual",
+        "externalSource": "Lifesum",
+        "cadence": "veckovis",
+        "unit": "g",
+        "targetLabel": "180–200 g",
+        "note": "Dagligt snitt"
+      },
+      {
+        "id": "bedtime-consistency",
+        "label": "Läggdags-konsistens",
+        "source": "manual",
+        "externalSource": "Garmin",
+        "cadence": "veckovis",
+        "targetLabel": "01:00 ±20 min",
+        "note": "Upp 09:00 flexar aldrig"
+      },
+      {
+        "id": "study-hours",
+        "label": "Studietimmar vs 40 h",
+        "source": "study_weekly",
+        "externalSource": "TickTick/manuell",
+        "cadence": "veckovis",
+        "unit": "h",
+        "target": 40,
+        "note": "Två deep-work-block"
+      },
+      {
+        "id": "cert-roadmap",
+        "label": "Certs/labs vs roadmap",
+        "source": "manual",
+        "externalSource": "Manuell",
+        "cadence": "månadsvis",
+        "target": 9,
+        "unit": "steg",
+        "note": "Fri ordning"
+      },
+      {
+        "id": "monthly-transfer",
+        "label": "2 000 kr-transfer skedde",
+        "source": "manual",
+        "externalSource": "Budget-app",
+        "cadence": "månadsvis",
+        "targetLabel": "ja",
+        "note": "Autotransfer"
+      },
+      {
+        "id": "net-worth",
+        "label": "Nettoförmögenhetstrend",
+        "source": "economy_total",
+        "externalSource": "Egen app",
+        "cadence": "månadsvis",
+        "unit": "kr",
+        "targetLabel": "trend uppåt",
+        "note": "Alla aktiva konton"
+      },
+      {
+        "id": "two-miss",
+        "label": "Two-miss-triggers",
+        "source": "manual",
+        "externalSource": "Manuell",
+        "cadence": "veckovis",
+        "unit": "triggers",
+        "target": 0,
+        "note": "Coachsignal, inte skuld"
+      }
+    ],
+    "seedProfileId": "suli-operating-system",
+    "seedVersion": "2026.07.31",
+    "productivity": {
+      "taskSystem": "TickTick",
+      "taskRule": "Enda tasklistan: tre studieuppgifter, gympass och övrigt.",
+      "calendarSystem": "Google Calendar",
+      "calendarRule": "Endast fasta ankare.",
+      "studyFloor": "Mobil borta under studieblocken."
+    },
+    "weeklyRoutine": [
+      {
+        "day": "Måndag",
+        "study": "Deep work · svåraste ämnet",
+        "training": "Push · 20:00–21:30"
+      },
+      {
+        "day": "Tisdag",
+        "study": "Labs / TryHackMe / HTB",
+        "training": "Pull · 20:00–21:30"
+      },
+      {
+        "day": "Onsdag",
+        "study": "Cert-repetition",
+        "training": "Legs · mid-week checkpoint"
+      },
+      {
+        "day": "Torsdag",
+        "study": "Deep work · andra svåra ämnet",
+        "training": "Vila · mobility/core 20–30 min"
+      },
+      {
+        "day": "Fredag",
+        "study": "Labs / portfolio",
+        "training": "Upper Focus"
+      },
+      {
+        "day": "Lördag",
+        "study": "Lätt repetition / catch-up",
+        "training": "Full Body + rodd/cykel · buffertdag"
+      },
+      {
+        "day": "Söndag",
+        "study": "Veckoreview 30 min + lätt planering",
+        "training": "Vila/bastu · flickvän-tid prioriteras"
+      }
+    ]
+  },
+  "goals": {
+    "goal-savings": {
+      "type": "number",
+      "direction": "increase",
+      "source": "economy_total",
+      "sourceId": "",
+      "startValue": 60000,
+      "targetValue": 120000,
+      "deadline": "2028-07-31",
+      "category": "Ekonomi",
+      "color": "#3ddc84",
+      "unit": "kr",
+      "checklistItems": [],
+      "actionLabel": "För över 2 000 kr på autotransfer-dagen",
+      "floorAction": "Kontrollera att månadens transfer är planerad",
+      "status": "active",
+      "startDate": "2026-07-31",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "updatedAt": "2026-07-31T12:00:00.000Z",
+      "achievedAt": null,
+      "id": "goal-savings",
+      "name": "Bygg 120 000 kr kapital",
+      "moduleId": "economy"
+    },
+    "goal-study-week": {
+      "type": "number",
+      "direction": "increase",
+      "source": "study_weekly",
+      "sourceId": "",
+      "startValue": 0,
+      "targetValue": 40,
+      "deadline": "",
+      "category": "Studier",
+      "color": "#a78bfa",
+      "unit": "h",
+      "checklistItems": [],
+      "actionLabel": "Skydda blocken 10:00–13:30 och 15:00–18:30",
+      "floorAction": "30 minuter på svåraste ämnet",
+      "status": "active",
+      "startDate": "2026-07-31",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "updatedAt": "2026-07-31T12:00:00.000Z",
+      "achievedAt": null,
+      "id": "goal-study-week",
+      "name": "40 timmar deep work per vecka",
+      "moduleId": "studies"
+    },
+    "goal-deload": {
+      "type": "number",
+      "direction": "increase",
+      "source": "manual",
+      "sourceId": "",
+      "startValue": 0,
+      "targetValue": 7,
+      "deadline": "",
+      "category": "Gym",
+      "color": "#5eb1ff",
+      "unit": "veckor",
+      "checklistItems": [],
+      "actionLabel": "Räkna träningsveckor och planera nästa deload",
+      "floorAction": "Skriv in nästa deload-vecka",
+      "status": "active",
+      "startDate": "2026-07-31",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "updatedAt": "2026-07-31T12:00:00.000Z",
+      "achievedAt": null,
+      "id": "goal-deload",
+      "name": "Deload var 6–8:e vecka",
+      "moduleId": "gym"
+    },
+    "goal-preprogram": {
+      "type": "checklist",
+      "direction": "increase",
+      "source": "manual",
+      "sourceId": "",
+      "startValue": 0,
+      "targetValue": 0,
+      "deadline": "2026-09-06",
+      "category": "Foundation Sprint",
+      "color": "#f0b429",
+      "unit": "",
+      "checklistItems": [
+        {
+          "id": "pre-bloodwork",
+          "label": "Boka bloodwork",
+          "group": "Vecka 1–4",
+          "done": false
+        },
+        {
+          "id": "pre-garmin",
+          "label": "Beställ Garmin Fenix 8 Solar Sapphire",
+          "group": "Vecka 1–4",
+          "done": false
+        },
+        {
+          "id": "pre-gym",
+          "label": "Starta 4-dagars gym-split 20:00–21:30",
+          "group": "Vecka 1–4",
+          "done": false
+        },
+        {
+          "id": "pre-sauna",
+          "label": "Etablera daglig bastu",
+          "group": "Vecka 1–4",
+          "done": false
+        },
+        {
+          "id": "pre-lifesum",
+          "label": "Börja Lifesum-loggning",
+          "group": "Vecka 1–4",
+          "done": false
+        },
+        {
+          "id": "pre-sleep",
+          "label": "Flytta sovschema mot 01:00–09:00",
+          "group": "Vecka 1–4",
+          "done": false
+        },
+        {
+          "id": "pre-kgyh",
+          "label": "Slutför KGYH-admin",
+          "group": "Vecka 1–4",
+          "done": false
+        },
+        {
+          "id": "pre-az900",
+          "label": "AZ-900 lätt · 5–8 h/vecka",
+          "group": "Vecka 5–8",
+          "done": false
+        },
+        {
+          "id": "pre-intensity",
+          "label": "Öka gym-intensitet kontrollerat",
+          "group": "Vecka 5–8",
+          "done": false
+        },
+        {
+          "id": "pre-review-bloodwork",
+          "label": "Granska bloodwork",
+          "group": "Vecka 5–8",
+          "done": false
+        },
+        {
+          "id": "pre-sim-one",
+          "label": "Full programdag-simulering 1",
+          "group": "Vecka 5–8",
+          "done": false
+        },
+        {
+          "id": "pre-sim-two",
+          "label": "Full programdag-simulering 2",
+          "group": "Vecka 5–8",
+          "done": false
+        },
+        {
+          "id": "pre-linux",
+          "label": "TryHackMe Linux fundamentals lätt",
+          "group": "Vecka 5–8",
+          "done": false
+        },
+        {
+          "id": "pre-kickoff",
+          "label": "Bekräfta Göteborg-kickoff 27 aug",
+          "group": "Vecka 9 · 31 aug–6 sep",
+          "done": false
+        },
+        {
+          "id": "pre-zoom",
+          "label": "Bekräfta Zoom-orientering 3 sep",
+          "group": "Vecka 9 · 31 aug–6 sep",
+          "done": false
+        },
+        {
+          "id": "pre-routine",
+          "label": "Lås veckorutin",
+          "group": "Vecka 9 · 31 aug–6 sep",
+          "done": false
+        },
+        {
+          "id": "pre-deload",
+          "label": "Genomför vilovecka",
+          "group": "Vecka 9 · 31 aug–6 sep",
+          "done": false
+        }
+      ],
+      "actionLabel": "Välj valfri öppen punkt som minskar friktionen inför start",
+      "floorAction": "Gör en tvåminuters admin-action",
+      "status": "active",
+      "startDate": "2026-07-31",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "updatedAt": "2026-07-31T12:00:00.000Z",
+      "achievedAt": null,
+      "id": "goal-preprogram",
+      "name": "90 dagar · pre-program sprint",
+      "moduleId": "personal"
+    }
+  },
+  "goalEntries": {},
+  "today": {
+    "completions": {},
+    "dismissed": {},
+    "contingency": null
+  },
+  "dashboard": {
+    "pinnedGoalIds": [
+      "goal-savings",
+      "goal-preprogram",
+      "goal-study-week"
+    ],
+    "hiddenWidgetIds": [],
+    "widgetOrder": [
+      "phase",
+      "economyMilestone",
+      "gymStreak",
+      "studyTarget",
+      "twoMiss",
+      "certRoadmap",
+      "weightTrend",
+      "restingHeartRate",
+      "nutrition",
+      "sleep",
+      "habits",
+      "reviews",
+      "economy",
+      "gym",
+      "studies"
+    ]
+  },
+  "modules": {
+    "economy": {
+      "accounts": {
+        "emergency": {
+          "id": "emergency",
+          "name": "Emergency fund",
+          "openingBalance": 60000,
+          "color": "#5eb1ff",
+          "archived": false,
+          "protected": true
+        },
+        "activeSavings": {
+          "id": "activeSavings",
+          "name": "Aktivt sparande",
+          "openingBalance": 0,
+          "color": "#3ddc84",
+          "archived": false
+        },
+        "spending": {
+          "id": "spending",
+          "name": "Flexkonto",
+          "openingBalance": 0,
+          "color": "#f0b429",
+          "archived": false
+        }
+      },
+      "transactions": [],
+      "milestones": [
+        75000,
+        100000,
+        120000
+      ],
+      "monthlyPlan": {
+        "income": 4120,
+        "fixedExpenses": 599,
+        "guaranteedSavings": 2000,
+        "flex": 1521,
+        "autoTransferDay": 25,
+        "autoTransferAccountId": "activeSavings"
+      }
+    },
+    "gym": {
+      "workouts": [],
+      "exerciseCatalog": [],
+      "stepGoal": {
+        "start": 3000,
+        "targetMin": 6000,
+        "targetMax": 7000,
+        "progression": "gradvis"
+      },
+      "restingHeartRateBaseline": {
+        "min": 85,
+        "max": 90,
+        "direction": "decrease"
+      },
+      "mobility": {
+        "warmupMinutes": "5–10",
+        "everyWorkout": true,
+        "thursdayMinutes": "20–30",
+        "coreFinisher": true
+      },
+      "cardioPreferences": [
+        "Rodd",
+        "Cykel"
+      ],
+      "excludedCardio": [
+        "Löpning"
+      ],
+      "workoutTemplates": [
+        {
+          "id": "template-push",
+          "dayLabel": "Måndag",
+          "type": "Push",
+          "durationMinutes": 90,
+          "exercises": [
+            {
+              "id": "push-chest",
+              "name": "Machine chest press",
+              "sets": 4,
+              "reps": 8
+            },
+            {
+              "id": "push-fly",
+              "name": "Cable fly",
+              "sets": 3,
+              "reps": 12
+            },
+            {
+              "id": "push-shoulder",
+              "name": "Machine shoulder press",
+              "sets": 4,
+              "reps": 8,
+              "priority": true
+            },
+            {
+              "id": "push-lateral",
+              "name": "Cable lateral raise",
+              "sets": 3,
+              "reps": 12,
+              "priority": true
+            },
+            {
+              "id": "push-triceps",
+              "name": "Triceps pushdown",
+              "sets": 3,
+              "reps": 10
+            },
+            {
+              "id": "push-core",
+              "name": "Core-finisher",
+              "sets": 3,
+              "reps": 12
+            }
+          ]
+        },
+        {
+          "id": "template-pull",
+          "dayLabel": "Tisdag",
+          "type": "Pull",
+          "durationMinutes": 90,
+          "exercises": [
+            {
+              "id": "pull-lat",
+              "name": "Lat pulldown",
+              "sets": 4,
+              "reps": 8
+            },
+            {
+              "id": "pull-row",
+              "name": "Chest-supported row",
+              "sets": 4,
+              "reps": 8,
+              "priority": true
+            },
+            {
+              "id": "pull-cable",
+              "name": "Single-arm cable row",
+              "sets": 3,
+              "reps": 10
+            },
+            {
+              "id": "pull-rear",
+              "name": "Reverse pec deck",
+              "sets": 3,
+              "reps": 12,
+              "priority": true
+            },
+            {
+              "id": "pull-curl",
+              "name": "Dumbbell curl",
+              "sets": 3,
+              "reps": 10
+            },
+            {
+              "id": "pull-hammer",
+              "name": "Cable hammer curl",
+              "sets": 3,
+              "reps": 10
+            },
+            {
+              "id": "pull-core",
+              "name": "Core-finisher",
+              "sets": 3,
+              "reps": 12
+            }
+          ]
+        },
+        {
+          "id": "template-legs",
+          "dayLabel": "Onsdag",
+          "type": "Legs",
+          "durationMinutes": 90,
+          "exercises": [
+            {
+              "id": "legs-press",
+              "name": "Leg press",
+              "sets": 4,
+              "reps": 10,
+              "priority": true
+            },
+            {
+              "id": "legs-curl",
+              "name": "Seated leg curl",
+              "sets": 4,
+              "reps": 10
+            },
+            {
+              "id": "legs-extension",
+              "name": "Leg extension",
+              "sets": 3,
+              "reps": 12
+            },
+            {
+              "id": "legs-rdl",
+              "name": "Romanian deadlift",
+              "sets": 3,
+              "reps": 8,
+              "priority": true
+            },
+            {
+              "id": "legs-calf",
+              "name": "Calf raise",
+              "sets": 4,
+              "reps": 12
+            },
+            {
+              "id": "legs-core",
+              "name": "Core-finisher",
+              "sets": 3,
+              "reps": 12
+            }
+          ]
+        },
+        {
+          "id": "template-upper",
+          "dayLabel": "Fredag",
+          "type": "Upper Focus",
+          "durationMinutes": 90,
+          "exercises": [
+            {
+              "id": "upper-shoulder",
+              "name": "Machine shoulder press",
+              "sets": 4,
+              "reps": 8,
+              "priority": true
+            },
+            {
+              "id": "upper-chest",
+              "name": "Machine chest press",
+              "sets": 3,
+              "reps": 8
+            },
+            {
+              "id": "upper-lat",
+              "name": "Lat pulldown",
+              "sets": 3,
+              "reps": 8
+            },
+            {
+              "id": "upper-lateral",
+              "name": "Cable lateral raise",
+              "sets": 4,
+              "reps": 12,
+              "priority": true
+            },
+            {
+              "id": "upper-row",
+              "name": "Chest-supported row",
+              "sets": 3,
+              "reps": 8
+            },
+            {
+              "id": "upper-fly",
+              "name": "Cable fly",
+              "sets": 2,
+              "reps": 12
+            },
+            {
+              "id": "upper-arms",
+              "name": "Arm superset",
+              "sets": 3,
+              "reps": 10
+            },
+            {
+              "id": "upper-core",
+              "name": "Core-finisher",
+              "sets": 3,
+              "reps": 12
+            }
+          ]
+        },
+        {
+          "id": "template-full",
+          "dayLabel": "Lördag",
+          "type": "Full Body + Cardio",
+          "durationMinutes": 90,
+          "exercises": [
+            {
+              "id": "full-squat",
+              "name": "Goblet squat",
+              "sets": 3,
+              "reps": 10
+            },
+            {
+              "id": "full-chest",
+              "name": "Machine chest press",
+              "sets": 3,
+              "reps": 10
+            },
+            {
+              "id": "full-row",
+              "name": "Cable row",
+              "sets": 3,
+              "reps": 10
+            },
+            {
+              "id": "full-rdl",
+              "name": "Romanian deadlift",
+              "sets": 3,
+              "reps": 8
+            },
+            {
+              "id": "full-lateral",
+              "name": "Cable lateral raise",
+              "sets": 3,
+              "reps": 12
+            },
+            {
+              "id": "full-rower",
+              "name": "Rodd",
+              "sets": 1,
+              "reps": 10
+            },
+            {
+              "id": "full-bike",
+              "name": "Cykel",
+              "sets": 1,
+              "reps": 15
+            },
+            {
+              "id": "full-core",
+              "name": "Core-finisher",
+              "sets": 3,
+              "reps": 12
+            }
+          ]
+        }
+      ]
+    },
+    "habits": {
+      "habits": [
+        {
+          "id": "habit-training",
+          "name": "Träning",
+          "frequency": "weekly_target",
+          "targetPerWeek": 5,
+          "fullVersion": "90 min planerat pass",
+          "minimumVersion": "10 min bodyweight",
+          "color": "#5eb1ff",
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "habit-nutrition",
+          "name": "Nutrition tracking",
+          "frequency": "daily",
+          "fullVersion": "Hela dagen loggad",
+          "minimumVersion": "Logga största måltiden",
+          "color": "#f472b6",
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "habit-study",
+          "name": "Studier",
+          "frequency": "daily",
+          "fullVersion": "7 h över två block",
+          "minimumVersion": "30 min på svåraste ämnet",
+          "color": "#a78bfa",
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "habit-sleep",
+          "name": "Sömnrytm",
+          "frequency": "daily",
+          "fullVersion": "01:00–09:00",
+          "minimumVersion": "Upp 09:00 oavsett läggdags",
+          "color": "#7dd3fc",
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "habit-sauna",
+          "name": "Bastu",
+          "frequency": "daily",
+          "fullVersion": "20 min",
+          "minimumVersion": "",
+          "color": "#f0b429",
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        }
+      ],
+      "checkIns": []
+    },
+    "studies": {
+      "sessions": [],
+      "activeSession": null,
+      "weeklyTargetHours": 40,
+      "blocks": [
+        {
+          "start": "10:00",
+          "end": "13:30",
+          "label": "Svåraste materialet · matte/logik"
+        },
+        {
+          "start": "15:00",
+          "end": "18:30",
+          "label": "Labs · hands-on"
+        }
+      ],
+      "noteStyle": "Kort och handlingsorienterad; repetition efter 24–48 h.",
+      "roadmap": [
+        {
+          "id": "cert-1",
+          "name": "AZ-900",
+          "done": false,
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "cert-2",
+          "name": "SC-900",
+          "done": false,
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "cert-3",
+          "name": "Linux fundamentals · TryHackMe",
+          "done": false,
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "cert-4",
+          "name": "CCSK study",
+          "done": false,
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "cert-5",
+          "name": "AZ-500",
+          "done": false,
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "cert-6",
+          "name": "CCSK exam",
+          "done": false,
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "cert-7",
+          "name": "SC-200",
+          "done": false,
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "cert-8",
+          "name": "AWS Cloud Practitioner",
+          "done": false,
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "cert-9",
+          "name": "AWS Security Specialty",
+          "done": false,
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        }
+      ]
+    },
+    "reviews": {
+      "entries": [],
+      "templates": {
+        "weekly": {
+          "label": "Vecka",
+          "depth": "Lätt",
+          "questions": [
+            "KPI-koll: vad rörde sig?",
+            "Nådde jag floor-versionerna?",
+            "Triggades two-miss?",
+            "Vilka tre studieprioriteringar gäller nästa vecka?",
+            "Hur skyddar jag flickvän-tid nästa vecka?"
+          ]
+        },
+        "monthly": {
+          "label": "Månad",
+          "depth": "Medel",
+          "questions": [
+            "Vad visar vikt- och kroppskompositionstrenden?",
+            "Hur rörde sig nyckellyften?",
+            "Vad är nästa cert/lab i roadmapen?",
+            "Skedde ekonomi-check och 2 000 kr-transfer?",
+            "Triggades two-miss 2–3+ gånger — och vad ska förenklas?"
+          ]
+        },
+        "quarterly": {
+          "label": "Kvartal",
+          "depth": "Djup",
+          "questions": [
+            "Ligger systemet rätt mot Foundation Sprint → Integration → Launch?",
+            "Ska gym-split eller nutrition omprövas?",
+            "Är LIA- och karriärtimingen fortfarande rätt?",
+            "Vilken större systemjustering ger mest effekt nästa kvartal?"
+          ]
+        }
+      }
+    },
+    "nutrition": {
+      "calculations": [],
+      "latestCalculationId": null,
+      "profile": {
+        "height": 195,
+        "weight": 125,
+        "targetWeight": "",
+        "gender": "male",
+        "activity": "moderate",
+        "lossType": "fat",
+        "weeklyRate": 0.5,
+        "goal": "body_composition",
+        "proteinMin": 180,
+        "proteinMax": 200,
+        "waterLiters": "3–4",
+        "mealTimes": {
+          "breakfast": "09:30",
+          "lunch": "14:00",
+          "dinner": "22:15"
+        },
+        "rotationWeeks": "4–6",
+        "burgerPizzaPerMonth": 2,
+        "supplements": [
+          "Proteinpulver",
+          "Kreatin 3–5 g/dag",
+          "Vitamin D"
+        ],
+        "exclusions": [
+          "Fisk",
+          "Skaldjur",
+          "Alkohol"
+        ]
+      },
+      "mealLibrary": [
+        {
+          "meal": "Frukost",
+          "time": "09:30",
+          "options": [
+            "Havregryn + kvarg + bär",
+            "Ägg + fullkornsbröd + frukt",
+            "Proteinshake + banan + havre",
+            "Kvargskål + müsli",
+            "Omelett + potatis",
+            "Keso + frukt + nötter"
+          ]
+        },
+        {
+          "meal": "Lunch",
+          "time": "14:00",
+          "options": [
+            "Kyckling + ris + grönsaker",
+            "Kalkonfärs + pasta",
+            "Nötfärs + potatis",
+            "Kycklingwrap + yoghurt-dressing",
+            "Chili på nötfärs + bönor",
+            "Halloumi + bulgur + sallad"
+          ]
+        },
+        {
+          "meal": "Middag",
+          "time": "22:15",
+          "options": [
+            "Kyckling + ris · extra protein",
+            "Nötfärsbowl + potatis",
+            "Kalkonpasta + kvarg-sås",
+            "Ägg- och kycklingwrap",
+            "Burgare inom 2×/månad-regeln",
+            "Hemgjord pizza inom 2×/månad-regeln"
+          ]
+        }
+      ]
+    },
+    "sleep": {
+      "logs": [],
+      "targetBedtime": "01:00",
+      "targetWakeTime": "09:00",
+      "shiftMethod": "Flytta 15–20 minuter var 3–4:e dag; 09:00 är ankaret.",
+      "rules": [
+        "Morgonljus direkt efter uppvakning",
+        "Mobil på laddare 30 min före läggdags",
+        "Dim smart-lampa sista timmen"
+      ]
+    },
+    "personal": {
+      "measurements": [
+        {
+          "id": "measurement-weight-start",
+          "type": "weight",
+          "value": 125,
+          "unit": "kg",
+          "date": "2026-07-31",
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        },
+        {
+          "id": "measurement-rhr-start",
+          "type": "resting_hr",
+          "value": 88,
+          "unit": "bpm",
+          "date": "2026-07-31",
+          "createdAt": "2026-07-31T12:00:00.000Z"
+        }
+      ]
+    }
+  },
+  "contingency": {
+    "history": [],
+    "definitions": [
+      {
+        "id": "sick",
+        "label": "Sjukdom",
+        "detail": "Återhämtning är dagens arbete. Ingen normal miss registreras.",
+        "floorRules": {
+          "default": "Vila, drick vatten och behåll uppvakningsankaret",
+          "habits": {
+            "habit-training": "Vila eller 5 min lätt mobility",
+            "habit-nutrition": "Logga största måltiden",
+            "habit-study": "Ingen studieplikt; skriv nästa steg",
+            "habit-sleep": "Upp 09:00 om kroppen tillåter"
+          }
+        }
+      },
+      {
+        "id": "travel",
+        "label": "Resa",
+        "detail": "Behåll ankaren och gör portabla floor-versioner.",
+        "floorRules": {
+          "default": "Gör en portabel 10-minutersversion",
+          "habits": {
+            "habit-training": "10 min bodyweight eller promenad",
+            "habit-nutrition": "Logga största måltiden",
+            "habit-study": "30 min offline-repetition",
+            "habit-sleep": "Behåll lokal 09:00-uppvakning"
+          }
+        }
+      },
+      {
+        "id": "low_motivation",
+        "label": "Låg motivation",
+        "detail": "Ingen omförhandling: floor räcker och bygger momentum.",
+        "floorRules": {
+          "default": "Gör minsta definierade version",
+          "habits": {
+            "habit-training": "10 min bodyweight",
+            "habit-nutrition": "Logga största måltiden",
+            "habit-study": "30 min på svåraste ämnet",
+            "habit-sleep": "Upp 09:00"
+          }
+        }
+      },
+      {
+        "id": "busy_week",
+        "label": "Genuint upptagen vecka",
+        "detail": "Skydda minimum och ta bort resten tillfälligt.",
+        "floorRules": {
+          "default": "Skydda bara dagens viktigaste ankare",
+          "habits": {
+            "habit-training": "10 min bodyweight",
+            "habit-nutrition": "Logga största måltiden",
+            "habit-study": "30 min på svåraste ämnet",
+            "habit-sleep": "Upp 09:00",
+            "habit-sauna": "Bastu endast om den får plats naturligt"
+          }
+        }
+      }
+    ]
+  },
+  "referenceRules": [
+    {
+      "id": "rule-never-zero",
+      "title": "Never zero",
+      "detail": "Gör full version när du kan och floor-versionen när du måste.",
+      "moduleIds": [
+        "habits"
+      ]
+    },
+    {
+      "id": "rule-two-miss",
+      "title": "Two-miss-trigger",
+      "detail": "En miss är data. Två i rad betyder: gör floor idag.",
+      "moduleIds": [
+        "habits"
+      ]
+    },
+    {
+      "id": "rule-weight-trend",
+      "title": "Vikt är en trend",
+      "detail": "Beslut tas på veckotrend och kroppskomposition, inte en enskild vägning.",
+      "moduleIds": [
+        "nutrition",
+        "gym"
+      ]
+    },
+    {
+      "id": "rule-quarter",
+      "title": "Stora ändringar bara kvartalsvis",
+      "detail": "Undvik att skriva om systemet mitt i en dålig vecka.",
+      "moduleIds": [
+        "reviews"
+      ]
+    },
+    {
+      "id": "rule-relationship",
+      "title": "Relation före träning",
+      "detail": "Flickvän-tid är en prioritet; använd contingency/floor när livet kräver det.",
+      "moduleIds": [
+        "habits",
+        "dashboard"
+      ]
+    },
+    {
+      "id": "rule-burger",
+      "title": "Burgare/pizza 2× per månad",
+      "detail": "Planerat, inbyggt och skuldfritt — inte ett systemfel.",
+      "moduleIds": [
+        "nutrition"
+      ]
+    },
+    {
+      "id": "rule-wake",
+      "title": "Sömnens uppvakning flexar aldrig",
+      "detail": "09:00 är ankaret även när läggtiden blev sen.",
+      "moduleIds": [
+        "sleep"
+      ]
+    },
+    {
+      "id": "rule-cert-labs",
+      "title": "Cert + labs ihop",
+      "detail": "Teori ska få en praktisk motsvarighet inom 24–48 timmar.",
+      "moduleIds": [
+        "studies"
+      ]
+    },
+    {
+      "id": "rule-sauna",
+      "title": "Bastu dagligen",
+      "detail": "Bastu är ett återhämtningsankare kopplat till träning och rutin.",
+      "moduleIds": [
+        "gym",
+        "habits"
+      ]
+    },
+    {
+      "id": "rule-simplify",
+      "title": "Förenkla vid tvivel",
+      "detail": "Minska ytan innan du ökar pressen. Behåll bara det som styr beteende.",
+      "moduleIds": [
+        "reviews"
+      ]
+    }
+  ],
+  "activity": [
+    {
+      "id": "activity-suli-seed",
+      "kind": "system",
+      "title": "Suli Operating System laddat",
+      "detail": "Seed 2026.07.31 · public appdata ersattes med den personliga profilen",
+      "occurredAt": "2026-07-31T12:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "createdAt": "2026-07-31T12:00:00.000Z",
+    "updatedAt": "2026-07-31T12:00:00.000Z",
+    "revision": 1,
+    "deviceId": "",
+    "lastSyncedAt": null,
+    "lastOpenedDate": "2026-07-31",
+    "seedVersion": "2026.07.31"
+  }
+}
