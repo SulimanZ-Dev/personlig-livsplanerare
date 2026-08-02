@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 4,
+  "schemaVersion": 6,
   "profile": {
     "displayName": "Suli",
     "locale": "sv-SE",
@@ -8,6 +8,15 @@
     "onboardingComplete": true,
     "theme": "dark",
     "quietIndicatorsEnabled": true,
+    "density": "comfortable",
+    "textScale": "normal",
+    "highContrast": false,
+    "localLockEnabled": false,
+    "gestures": {
+      "swipeRight": "complete",
+      "swipeLeft": "skip",
+      "doubleTap": "complete"
+    },
     "phases": [
       {
         "id": "foundation-sprint",
@@ -184,8 +193,8 @@
       {
         "id": "nutrition-days",
         "label": "Dagar loggade kost",
-        "source": "manual",
-        "externalSource": "Lifesum",
+        "source": "nutrition_days",
+        "externalSource": "Egen app",
         "cadence": "veckovis",
         "unit": "dagar",
         "target": 7,
@@ -194,8 +203,8 @@
       {
         "id": "protein-average",
         "label": "Proteinsnitt",
-        "source": "manual",
-        "externalSource": "Lifesum",
+        "source": "nutrition_protein",
+        "externalSource": "Egen app",
         "cadence": "veckovis",
         "unit": "g",
         "targetLabel": "180–200 g",
@@ -261,7 +270,7 @@
       }
     ],
     "seedProfileId": "suli-operating-system",
-    "seedVersion": "2026.07.31",
+    "seedVersion": "2026.08.02-v2",
     "productivity": {
       "taskSystem": "TickTick",
       "taskRule": "Enda tasklistan: tre studieuppgifter, gympass och övrigt.",
@@ -505,6 +514,7 @@
     }
   },
   "goalEntries": {},
+  "goalTemplates": [],
   "today": {
     "completions": {},
     "dismissed": {},
@@ -533,7 +543,26 @@
       "economy",
       "gym",
       "studies"
-    ]
+    ],
+    "quickNavIds": [
+      "system",
+      "nutrition",
+      "economy",
+      "gym",
+      "habits",
+      "studies",
+      "sleep",
+      "reviews",
+      "statistics"
+    ],
+    "widgetSizes": {
+      "economyMilestone": "wide",
+      "studyTarget": "wide",
+      "twoMiss": "detailed",
+      "certRoadmap": "wide"
+    },
+    "savedViews": [],
+    "activeSavedViewId": ""
   },
   "modules": {
     "economy": {
@@ -541,6 +570,7 @@
         "emergency": {
           "id": "emergency",
           "name": "Emergency fund",
+          "kind": "buffer",
           "openingBalance": 60000,
           "color": "#5eb1ff",
           "archived": false,
@@ -549,6 +579,7 @@
         "activeSavings": {
           "id": "activeSavings",
           "name": "Aktivt sparande",
+          "kind": "savings",
           "openingBalance": 0,
           "color": "#3ddc84",
           "archived": false
@@ -556,6 +587,7 @@
         "spending": {
           "id": "spending",
           "name": "Flexkonto",
+          "kind": "spending",
           "openingBalance": 0,
           "color": "#f0b429",
           "archived": false
@@ -567,6 +599,36 @@
         100000,
         120000
       ],
+      "budgets": [
+        {
+          "id": "budget-flex",
+          "category": "Flex",
+          "amount": 1521
+        }
+      ],
+      "recurringTransactions": [
+        {
+          "id": "recurring-csn",
+          "name": "CSN",
+          "type": "deposit",
+          "amount": 4120,
+          "day": 25,
+          "accountId": "spending",
+          "active": true
+        },
+        {
+          "id": "recurring-autosave",
+          "name": "Garanterat sparande",
+          "type": "transfer",
+          "amount": 2000,
+          "day": 25,
+          "fromAccountId": "spending",
+          "toAccountId": "activeSavings",
+          "active": true
+        }
+      ],
+      "reconciliations": [],
+      "subscriptions": [],
       "monthlyPlan": {
         "income": 4120,
         "fixedExpenses": 599,
@@ -871,6 +933,15 @@
           "name": "Träning",
           "frequency": "weekly_target",
           "targetPerWeek": 5,
+          "weekdays": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "group": "evening",
+          "paused": false,
           "fullVersion": "90 min planerat pass",
           "minimumVersion": "10 min bodyweight",
           "color": "#5eb1ff",
@@ -880,6 +951,17 @@
           "id": "habit-nutrition",
           "name": "Nutrition tracking",
           "frequency": "daily",
+          "weekdays": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "group": "other",
+          "paused": false,
           "fullVersion": "Hela dagen loggad",
           "minimumVersion": "Logga största måltiden",
           "color": "#f472b6",
@@ -889,6 +971,15 @@
           "id": "habit-study",
           "name": "Studier",
           "frequency": "daily",
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "group": "morning",
+          "paused": false,
           "fullVersion": "7 h över två block",
           "minimumVersion": "30 min på svåraste ämnet",
           "color": "#a78bfa",
@@ -898,6 +989,17 @@
           "id": "habit-sleep",
           "name": "Sömnrytm",
           "frequency": "daily",
+          "weekdays": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "group": "evening",
+          "paused": false,
           "fullVersion": "01:00–09:00",
           "minimumVersion": "Upp 09:00 oavsett läggdags",
           "color": "#7dd3fc",
@@ -907,17 +1009,33 @@
           "id": "habit-sauna",
           "name": "Bastu",
           "frequency": "daily",
+          "weekdays": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "group": "evening",
+          "paused": false,
           "fullVersion": "20 min",
           "minimumVersion": "",
           "color": "#f0b429",
           "createdAt": "2026-07-31T12:00:00.000Z"
         }
       ],
-      "checkIns": []
+      "checkIns": [],
+      "routineGroups": []
     },
     "studies": {
       "sessions": [],
       "activeSession": null,
+      "timerMode": "free",
+      "pomodoroMinutes": 25,
+      "schedule": [],
+      "reviewQueue": [],
       "weeklyTargetHours": 40,
       "blocks": [
         {
@@ -937,54 +1055,81 @@
           "id": "cert-1",
           "name": "AZ-900",
           "done": false,
+          "dependsOn": "",
+          "resource": "",
+          "examDate": "",
           "createdAt": "2026-07-31T12:00:00.000Z"
         },
         {
           "id": "cert-2",
           "name": "SC-900",
           "done": false,
+          "dependsOn": "cert-1",
+          "resource": "",
+          "examDate": "",
           "createdAt": "2026-07-31T12:00:00.000Z"
         },
         {
           "id": "cert-3",
           "name": "Linux fundamentals · TryHackMe",
           "done": false,
+          "dependsOn": "cert-2",
+          "resource": "",
+          "examDate": "",
           "createdAt": "2026-07-31T12:00:00.000Z"
         },
         {
           "id": "cert-4",
           "name": "CCSK study",
           "done": false,
+          "dependsOn": "cert-3",
+          "resource": "",
+          "examDate": "",
           "createdAt": "2026-07-31T12:00:00.000Z"
         },
         {
           "id": "cert-5",
           "name": "AZ-500",
           "done": false,
+          "dependsOn": "cert-4",
+          "resource": "",
+          "examDate": "",
           "createdAt": "2026-07-31T12:00:00.000Z"
         },
         {
           "id": "cert-6",
           "name": "CCSK exam",
           "done": false,
+          "dependsOn": "cert-5",
+          "resource": "",
+          "examDate": "",
           "createdAt": "2026-07-31T12:00:00.000Z"
         },
         {
           "id": "cert-7",
           "name": "SC-200",
           "done": false,
+          "dependsOn": "cert-6",
+          "resource": "",
+          "examDate": "",
           "createdAt": "2026-07-31T12:00:00.000Z"
         },
         {
           "id": "cert-8",
           "name": "AWS Cloud Practitioner",
           "done": false,
+          "dependsOn": "cert-7",
+          "resource": "",
+          "examDate": "",
           "createdAt": "2026-07-31T12:00:00.000Z"
         },
         {
           "id": "cert-9",
           "name": "AWS Security Specialty",
           "done": false,
+          "dependsOn": "cert-8",
+          "resource": "",
+          "examDate": "",
           "createdAt": "2026-07-31T12:00:00.000Z"
         }
       ]
@@ -1029,6 +1174,16 @@
     "nutrition": {
       "calculations": [],
       "latestCalculationId": null,
+      "intakeLogs": [],
+      "supplementLibrary": [],
+      "foods": [],
+      "recipes": [],
+      "mealPlans": [],
+      "shoppingItems": [],
+      "pantryItems": [],
+      "hydrationLogs": [],
+      "dayTypes": {},
+      "completedDays": {},
       "profile": {
         "height": 195,
         "weight": 125,
@@ -1192,6 +1347,95 @@
       }
     ]
   },
+  "planner": {
+    "events": [],
+    "inbox": [],
+    "wellbeing": [],
+    "maintenanceModes": []
+  },
+  "projects": [],
+  "lifeAdmin": {
+    "documents": [],
+    "decisions": []
+  },
+  "scenarios": [],
+  "coach": {
+    "rules": [
+      {
+        "id": "protein_remaining",
+        "label": "Protein kvar idag",
+        "enabled": true,
+        "threshold": 20
+      },
+      {
+        "id": "two_miss",
+        "label": "Rutiner som riskerar en andra miss",
+        "enabled": true,
+        "threshold": 1
+      },
+      {
+        "id": "study_gap",
+        "label": "Studietid efter veckomålet",
+        "enabled": true,
+        "threshold": 1
+      },
+      {
+        "id": "gym_plateau",
+        "label": "Träningsveckor utan progression",
+        "enabled": true,
+        "threshold": 3
+      },
+      {
+        "id": "savings_deadline",
+        "label": "Sparkrav för deadline",
+        "enabled": true,
+        "threshold": 1
+      },
+      {
+        "id": "recovery",
+        "label": "Sömn och tung träning",
+        "enabled": true,
+        "threshold": 6
+      }
+    ]
+  },
+  "automations": {
+    "rules": [
+      {
+        "id": "gym_habit",
+        "label": "Gympass → träningsrutin full",
+        "enabled": true
+      },
+      {
+        "id": "nutrition_floor",
+        "label": "Kostintag → nutrition floor",
+        "enabled": true
+      },
+      {
+        "id": "nutrition_full",
+        "label": "Hel kostdag → nutrition full",
+        "enabled": true
+      },
+      {
+        "id": "study_goal",
+        "label": "Deep work → studiemål",
+        "enabled": true
+      },
+      {
+        "id": "two_miss_floor",
+        "label": "Två missar → floor-uppgift",
+        "enabled": true
+      },
+      {
+        "id": "saving_goal",
+        "label": "Insättning → ekonomimål",
+        "enabled": true
+      }
+    ]
+  },
+  "favorites": [],
+  "recentCaptures": [],
+  "trash": [],
   "referenceRules": [
     {
       "id": "rule-never-zero",
@@ -1282,7 +1526,7 @@
       "id": "activity-suli-seed",
       "kind": "system",
       "title": "Suli Operating System laddat",
-      "detail": "Seed 2026.07.31 · public appdata ersattes med den personliga profilen",
+      "detail": "Seed 2026.08.02-v2 · public appdata ersattes med den personliga profilen",
       "occurredAt": "2026-07-31T12:00:00.000Z"
     }
   ],
@@ -1292,7 +1536,7 @@
     "revision": 1,
     "deviceId": "",
     "lastSyncedAt": null,
-    "lastOpenedDate": "2026-07-31",
-    "seedVersion": "2026.07.31"
+    "lastOpenedDate": "2026-08-02",
+    "seedVersion": "2026.08.02-v2"
   }
 }

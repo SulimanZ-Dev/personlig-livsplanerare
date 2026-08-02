@@ -125,3 +125,37 @@ export function recentNutritionChoices(entries = [], limit = 6) {
     return true;
   }).slice(0, limit);
 }
+
+export function scaleNutrition(values = {}, grams = 100) {
+  const factor = Math.max(0, Number(grams) || 0) / 100;
+  return Object.fromEntries(macroKeys.map((key) => [key, Math.round((Number(values[key]) || 0) * factor * 10) / 10]));
+}
+
+export function recipeTotals(recipe, foods = []) {
+  const foodMap = new Map(foods.map((food) => [food.id, food]));
+  const total = (recipe.ingredients || []).reduce((sum, ingredient) => {
+    const values = scaleNutrition(foodMap.get(ingredient.foodId) || ingredient, ingredient.grams);
+    macroKeys.forEach((key) => { sum[key] += values[key]; });
+    return sum;
+  }, { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 });
+  const portions = Math.max(1, Number(recipe.portions) || 1);
+  return Object.fromEntries(macroKeys.map((key) => [key, Math.round(total[key] / portions * 10) / 10]));
+}
+
+export function weeklyNutritionAverage(entries = [], endDate = new Date()) {
+  const end = new Date(endDate);
+  end.setHours(23, 59, 59, 999);
+  const start = new Date(end);
+  start.setDate(start.getDate() - 6);
+  start.setHours(0, 0, 0, 0);
+  const days = new Set();
+  const total = entries.reduce((sum, entry) => {
+    const date = new Date(`${entry.date}T12:00:00`);
+    if (date < start || date > end) return sum;
+    days.add(entry.date);
+    macroKeys.forEach((key) => { sum[key] += Number(entry[key]) || 0; });
+    return sum;
+  }, { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 });
+  const divisor = Math.max(1, days.size);
+  return { ...Object.fromEntries(macroKeys.map((key) => [key, Math.round(total[key] / divisor * 10) / 10])), loggedDays: days.size };
+}

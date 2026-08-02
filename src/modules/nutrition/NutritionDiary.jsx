@@ -17,7 +17,7 @@ const emptyEntry = (date) => ({ kind: "food", mealType: "breakfast", name: "", s
 
 const numberValue = (value) => Math.max(0, Number(String(value).replace(",", ".")) || 0);
 
-export function NutritionDiary({ nutrition, onSave, onDelete }) {
+export function NutritionDiary({ nutrition, onSave, onDelete, onCompleteDay }) {
   const [selectedDate, setSelectedDate] = useState(localISO());
   const [editor, setEditor] = useState(null);
   const [form, setForm] = useState(() => emptyEntry(localISO()));
@@ -76,6 +76,13 @@ export function NutritionDiary({ nutrition, onSave, onDelete }) {
     const timestamp = new Date().toISOString();
     onSave({ id: `intake-${crypto.randomUUID()}`, kind: "supplement", mealType: "supplement", name, serving: "", dose: "", calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, notes: "", date: selectedDate, time: nowTime(), occurredAt: timestamp, createdAt: timestamp, updatedAt: timestamp }, false);
   };
+  const copyPreviousDay = () => {
+    const sourceDate = shiftDate(selectedDate, -1);
+    entries.filter((entry) => entry.date === sourceDate).forEach((entry, index) => {
+      const timestamp = new Date(Date.now() + index).toISOString();
+      onSave({ ...entry, id: `intake-${crypto.randomUUID()}`, date: selectedDate, occurredAt: timestamp, createdAt: timestamp, updatedAt: timestamp }, false);
+    });
+  };
 
   const macroCards = [
     ["Kalorier", totals.calories, targets.calories, "kcal", "#f472b6"],
@@ -96,7 +103,7 @@ export function NutritionDiary({ nutrition, onSave, onDelete }) {
       })}
     </section>
 
-    <div className="nutrition-diary-actions"><button className="primary-button" onClick={() => openEditor()}><Icon name="plus" size={18} /> Logga intag</button><span className="intake-count">{totals.items} intag · {Math.round(totals.fiber)} g fiber</span></div>
+    <div className="nutrition-diary-actions"><button className="primary-button" onClick={() => openEditor()}><Icon name="plus" size={18} /> Logga intag</button><button className="secondary-button compact-button" disabled={!entries.some((entry) => entry.date === shiftDate(selectedDate, -1))} onClick={copyPreviousDay}><Icon name="calendar" size={15} /> Kopiera gårdagen</button><button className={`secondary-button compact-button ${nutrition.completedDays?.[selectedDate] ? "active" : ""}`} disabled={!totals.items} onClick={() => onCompleteDay(selectedDate)}><Icon name="check" size={15} /> {nutrition.completedDays?.[selectedDate] ? "Dagen är komplett" : "Hela dagen loggad"}</button><span className="intake-count">{totals.items} intag · {Math.round(totals.fiber)} g fiber</span></div>
 
     {recent.length > 0 && <section className="quick-intake-section"><div className="section-title"><span>LOGGA IGEN</span><small>ett tryck</small></div><div className="quick-intake-scroll">{recent.map((entry) => <button className="card quick-intake" key={`${entry.kind}-${entry.name}`} onClick={() => repeatEntry(entry)}><Icon name={entry.kind === "supplement" ? "plus" : "nutrition"} size={15} /><span><strong>{entry.name}</strong><small>{entry.kind === "supplement" ? entry.dose || "tillskott" : `${entry.calories} kcal · ${entry.protein} g P`}</small></span></button>)}</div></section>}
 

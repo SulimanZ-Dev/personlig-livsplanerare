@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateBmr, calculateNutritionPlan, hasHeavyRecentWorkout, macroCalories, nutritionTargets, nutritionTotals, recentNutritionChoices, removeNutritionEntry, upsertNutritionEntry } from "./nutritionModel";
+import { calculateBmr, calculateNutritionPlan, hasHeavyRecentWorkout, macroCalories, nutritionTargets, nutritionTotals, recentNutritionChoices, recipeTotals, removeNutritionEntry, scaleNutrition, upsertNutritionEntry, weeklyNutritionAverage } from "./nutritionModel";
 
 const base = { weight: 90, height: 180, age: 30, gender: "male", activity: "moderate", lossType: "fat", weeklyRate: 0.6, targetWeight: 82 };
 
@@ -55,5 +55,12 @@ describe("nutrition diary", () => {
 
   it("returns unique recent choices", () => {
     expect(recentNutritionChoices(entries).map((entry) => entry.name)).toEqual(["Kreatin", "Kvarg"]);
+  });
+
+  it("scales foods, recipes and weekly averages", () => {
+    expect(scaleNutrition({ calories: 400, protein: 20 }, 150)).toMatchObject({ calories: 600, protein: 30 });
+    const foods = [{ id: "rice", calories: 350, protein: 8, carbs: 75, fat: 1, fiber: 2 }];
+    expect(recipeTotals({ portions: 2, ingredients: [{ foodId: "rice", grams: 200 }] }, foods).calories).toBe(350);
+    expect(weeklyNutritionAverage(entries, new Date("2026-07-31T12:00:00")).loggedDays).toBe(2);
   });
 });

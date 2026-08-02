@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Icon } from "../../components/ui/Icon";
 import { ACTIVITY_LEVELS, calculateNutritionPlan, hasHeavyRecentWorkout } from "./nutritionModel";
 import { NutritionDiary } from "./NutritionDiary";
+import { NutritionStudio } from "./NutritionStudio";
 
 const initialForm = {
   weight: "80",
@@ -16,7 +17,7 @@ const initialForm = {
 
 const calories = (value) => `${Number(value).toLocaleString("sv-SE")} kcal`;
 
-export function NutritionView({ state, onSaveCalculation, onCreateGoal, onSaveIntake, onDeleteIntake }) {
+export function NutritionView({ state, onSaveCalculation, onCreateGoal, onSaveIntake, onDeleteIntake, onMutate }) {
   const latestId = state.modules.nutrition.latestCalculationId;
   const latest = state.modules.nutrition.calculations.find((item) => item.id === latestId) || state.modules.nutrition.calculations.at(-1);
   const profileDefaults = state.modules.nutrition.profile || {};
@@ -39,9 +40,18 @@ export function NutritionView({ state, onSaveCalculation, onCreateGoal, onSaveIn
   return (
     <div className="page nutrition-page">
       <header className="page-header nutrition-hero"><div className="eyebrow">KOST · ENERGI · ÅTERHÄMTNING</div><h1>Nutrition</h1><p>Logga det du äter, följ dagens makron och använd kalkylatorn när planen behöver justeras.</p></header>
-      <div className="nutrition-mode-tabs" role="tablist" aria-label="Nutrition-vy"><button role="tab" aria-selected={mode === "diary"} className={mode === "diary" ? "active" : ""} onClick={() => setMode("diary")}><Icon name="nutrition" size={16} /> Dagbok</button><button role="tab" aria-selected={mode === "calculator"} className={mode === "calculator" ? "active" : ""} onClick={() => setMode("calculator")}><Icon name="chart" size={16} /> Kalkylator</button></div>
+      <div className="nutrition-mode-tabs" role="tablist" aria-label="Nutrition-vy"><button role="tab" aria-selected={mode === "diary"} className={mode === "diary" ? "active" : ""} onClick={() => setMode("diary")}><Icon name="nutrition" size={16} /> Dagbok</button><button role="tab" aria-selected={mode === "studio"} className={mode === "studio" ? "active" : ""} onClick={() => setMode("studio")}><Icon name="calendar" size={16} /> Matplan</button><button role="tab" aria-selected={mode === "calculator"} className={mode === "calculator" ? "active" : ""} onClick={() => setMode("calculator")}><Icon name="chart" size={16} /> Kalkylator</button></div>
 
-      {mode === "diary" ? <NutritionDiary nutrition={state.modules.nutrition} onSave={onSaveIntake} onDelete={onDeleteIntake} /> : <>
+      {mode === "diary" ? <NutritionDiary nutrition={state.modules.nutrition} onSave={onSaveIntake} onDelete={onDeleteIntake} onCompleteDay={(date) => onMutate((current) => {
+        const completed = !current.modules.nutrition.completedDays?.[date];
+        const habit = current.modules.habits.habits.find((item) => `${item.name} ${item.category || ""}`.toLocaleLowerCase("sv-SE").includes("nutrition") || `${item.name}`.toLocaleLowerCase("sv-SE").includes("kost"));
+        const nutrition = { ...current.modules.nutrition, completedDays: { ...(current.modules.nutrition.completedDays || {}), [date]: completed } };
+        if (!habit) return { ...current, modules: { ...current.modules, nutrition } };
+        const existing = current.modules.habits.checkIns.find((item) => item.habitId === habit.id && item.date === date);
+        const checkIn = { id: existing?.id || `check-${crypto.randomUUID()}`, habitId: habit.id, date, done: completed, level: completed ? "full" : "floor", automated: true };
+        const checkIns = existing ? current.modules.habits.checkIns.map((item) => item.id === existing.id ? checkIn : item) : [...current.modules.habits.checkIns, checkIn];
+        return { ...current, modules: { ...current.modules, nutrition, habits: { ...current.modules.habits, checkIns } } };
+      }, "Kostdag uppdaterad", date)} /> : mode === "studio" ? <NutritionStudio state={state} onMutate={onMutate} onLogRecipe={(recipe, totals, scale) => onSaveIntake({ id: `intake-${crypto.randomUUID()}`, kind: "food", mealType: "other", name: recipe.name, serving: `${scale}× portion`, calories: Math.round(totals.calories * scale), protein: Math.round(totals.protein * scale * 10) / 10, carbs: Math.round(totals.carbs * scale * 10) / 10, fat: Math.round(totals.fat * scale * 10) / 10, fiber: Math.round(totals.fiber * scale * 10) / 10, dose: "", notes: "Från recept", date: new Date().toLocaleDateString("sv-SE"), time: new Date().toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" }), occurredAt: new Date().toISOString(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, false)} /> : <>
       <aside className="calculator-intro card"><Icon name="shield" /><div><strong>Publik kalkylator · inget konto krävs</strong><p>Räkna på TDEE, takt och protein med coachvarningar när underskottet blir för aggressivt.</p></div></aside>
 
       {profileDefaults.proteinMin && <section className="card nutrition-strategy"><div><span className="eyebrow">DIN NUTRITION-RAM</span><strong>{profileDefaults.proteinMin}–{profileDefaults.proteinMax} g protein</strong><small>{profileDefaults.waterLiters} L vatten · måttligt underskott</small></div><div><b>{profileDefaults.mealTimes?.breakfast}</b><span>frukost</span><b>{profileDefaults.mealTimes?.lunch}</b><span>lunch</span><b>{profileDefaults.mealTimes?.dinner}</b><span>middag</span></div></section>}

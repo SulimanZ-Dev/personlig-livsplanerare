@@ -3,6 +3,7 @@ import { QUICK_NAV } from "../../components/layout/AppShell";
 
 export function MoreView({ onNavigate, state }) {
   const links = [
+    ["system", "calendar", "Planera & organisera", "Kalender, inbox, coach, projekt och papperskorg"],
     ["economy", "wallet", "Ekonomi", "Konton, transaktioner och sparmål"],
     ["habits", "check", "Rutiner", "Never zero och two-miss"],
     ["gym", "dumbbell", "Gym", "Pass och progressiv överbelastning"],

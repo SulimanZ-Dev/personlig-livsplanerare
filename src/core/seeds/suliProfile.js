@@ -11,7 +11,7 @@ import { createInitialState } from "../storage/schema.js";
  * så småningom lägga i en backend utan att UI-komponenterna känner till "Suli".
  */
 
-export const SULI_PROFILE_SEED_VERSION = "2026.07.31";
+export const SULI_PROFILE_SEED_VERSION = "2026.08.02-v2";
 
 const SEEDED_AT = "2026-07-31T12:00:00.000Z";
 
@@ -107,12 +107,19 @@ export function createSuliProfile() {
   // Saldot beräknas alltid från openingBalance + redigerbara transaktioner.
   state.modules.economy = {
     accounts: {
-      emergency: { id: "emergency", name: "Emergency fund", openingBalance: 60000, color: "#5eb1ff", archived: false, protected: true },
-      activeSavings: { id: "activeSavings", name: "Aktivt sparande", openingBalance: 0, color: "#3ddc84", archived: false },
-      spending: { id: "spending", name: "Flexkonto", openingBalance: 0, color: "#f0b429", archived: false },
+      emergency: { id: "emergency", name: "Emergency fund", kind: "buffer", openingBalance: 60000, color: "#5eb1ff", archived: false, protected: true },
+      activeSavings: { id: "activeSavings", name: "Aktivt sparande", kind: "savings", openingBalance: 0, color: "#3ddc84", archived: false },
+      spending: { id: "spending", name: "Flexkonto", kind: "spending", openingBalance: 0, color: "#f0b429", archived: false },
     },
     transactions: [],
     milestones: [75000, 100000, 120000],
+    budgets: [{ id: "budget-flex", category: "Flex", amount: 1521 }],
+    recurringTransactions: [
+      { id: "recurring-csn", name: "CSN", type: "deposit", amount: 4120, day: 25, accountId: "spending", active: true },
+      { id: "recurring-autosave", name: "Garanterat sparande", type: "transfer", amount: 2000, day: 25, fromAccountId: "spending", toAccountId: "activeSavings", active: true },
+    ],
+    reconciliations: [],
+    subscriptions: [],
     monthlyPlan: {
       income: 4120,
       fixedExpenses: 599,
@@ -194,13 +201,14 @@ export function createSuliProfile() {
   // Rutiner: full-version + floor-version är den centrala never-zero-kontraktet.
   state.modules.habits = {
     habits: [
-      { id: "habit-training", name: "Träning", frequency: "weekly_target", targetPerWeek: 5, fullVersion: "90 min planerat pass", minimumVersion: "10 min bodyweight", color: "#5eb1ff", createdAt: SEEDED_AT },
-      { id: "habit-nutrition", name: "Nutrition tracking", frequency: "daily", fullVersion: "Hela dagen loggad", minimumVersion: "Logga största måltiden", color: "#f472b6", createdAt: SEEDED_AT },
-      { id: "habit-study", name: "Studier", frequency: "daily", fullVersion: "7 h över två block", minimumVersion: "30 min på svåraste ämnet", color: "#a78bfa", createdAt: SEEDED_AT },
-      { id: "habit-sleep", name: "Sömnrytm", frequency: "daily", fullVersion: "01:00–09:00", minimumVersion: "Upp 09:00 oavsett läggdags", color: "#7dd3fc", createdAt: SEEDED_AT },
-      { id: "habit-sauna", name: "Bastu", frequency: "daily", fullVersion: "20 min", minimumVersion: "", color: "#f0b429", createdAt: SEEDED_AT },
+      { id: "habit-training", name: "Träning", frequency: "weekly_target", targetPerWeek: 5, weekdays: [1, 2, 3, 5, 6], group: "evening", paused: false, fullVersion: "90 min planerat pass", minimumVersion: "10 min bodyweight", color: "#5eb1ff", createdAt: SEEDED_AT },
+      { id: "habit-nutrition", name: "Nutrition tracking", frequency: "daily", weekdays: [0, 1, 2, 3, 4, 5, 6], group: "other", paused: false, fullVersion: "Hela dagen loggad", minimumVersion: "Logga största måltiden", color: "#f472b6", createdAt: SEEDED_AT },
+      { id: "habit-study", name: "Studier", frequency: "daily", weekdays: [1, 2, 3, 4, 5], group: "morning", paused: false, fullVersion: "7 h över två block", minimumVersion: "30 min på svåraste ämnet", color: "#a78bfa", createdAt: SEEDED_AT },
+      { id: "habit-sleep", name: "Sömnrytm", frequency: "daily", weekdays: [0, 1, 2, 3, 4, 5, 6], group: "evening", paused: false, fullVersion: "01:00–09:00", minimumVersion: "Upp 09:00 oavsett läggdags", color: "#7dd3fc", createdAt: SEEDED_AT },
+      { id: "habit-sauna", name: "Bastu", frequency: "daily", weekdays: [0, 1, 2, 3, 4, 5, 6], group: "evening", paused: false, fullVersion: "20 min", minimumVersion: "", color: "#f0b429", createdAt: SEEDED_AT },
     ],
     checkIns: [],
+    routineGroups: [],
   };
 
   // G + B: kaloriräknaren startar med biometri men utan fast målvikt.
@@ -209,6 +217,14 @@ export function createSuliProfile() {
     latestCalculationId: null,
     intakeLogs: [],
     supplementLibrary: [],
+    foods: [],
+    recipes: [],
+    mealPlans: [],
+    shoppingItems: [],
+    pantryItems: [],
+    hydrationLogs: [],
+    dayTypes: {},
+    completedDays: {},
     profile: { height: 195, weight: 125, targetWeight: "", gender: "male", activity: "moderate", lossType: "fat", weeklyRate: 0.5, goal: "body_composition", proteinMin: 180, proteinMax: 200, waterLiters: "3–4", mealTimes: { breakfast: "09:30", lunch: "14:00", dinner: "22:15" }, rotationWeeks: "4–6", burgerPizzaPerMonth: 2, supplements: ["Proteinpulver", "Kreatin 3–5 g/dag", "Vitamin D"], exclusions: ["Fisk", "Skaldjur", "Alkohol"] },
     mealLibrary: [
       { meal: "Frukost", time: "09:30", options: ["Havregryn + kvarg + bär", "Ägg + fullkornsbröd + frukt", "Proteinshake + banan + havre", "Kvargskål + müsli", "Omelett + potatis", "Keso + frukt + nötter"] },
@@ -230,10 +246,14 @@ export function createSuliProfile() {
   state.modules.studies = {
     sessions: [],
     activeSession: null,
+    timerMode: "free",
+    pomodoroMinutes: 25,
+    schedule: [],
+    reviewQueue: [],
     weeklyTargetHours: 40,
     blocks: [{ start: "10:00", end: "13:30", label: "Svåraste materialet · matte/logik" }, { start: "15:00", end: "18:30", label: "Labs · hands-on" }],
     noteStyle: "Kort och handlingsorienterad; repetition efter 24–48 h.",
-    roadmap: ["AZ-900", "SC-900", "Linux fundamentals · TryHackMe", "CCSK study", "AZ-500", "CCSK exam", "SC-200", "AWS Cloud Practitioner", "AWS Security Specialty"].map((name, index) => ({ id: `cert-${index + 1}`, name, done: false, createdAt: SEEDED_AT })),
+    roadmap: ["AZ-900", "SC-900", "Linux fundamentals · TryHackMe", "CCSK study", "AZ-500", "CCSK exam", "SC-200", "AWS Cloud Practitioner", "AWS Security Specialty"].map((name, index) => ({ id: `cert-${index + 1}`, name, done: false, dependsOn: index ? `cert-${index}` : "", resource: "", examDate: "", createdAt: SEEDED_AT })),
   };
 
   // N: seedens frågor ersätter enbart frågetext; review-motorn är fortfarande generell.
@@ -276,7 +296,10 @@ export function createSuliProfile() {
     pinnedGoalIds: ["goal-savings", "goal-preprogram", "goal-study-week"],
     hiddenWidgetIds: [],
     widgetOrder: ["phase", "economyMilestone", "gymStreak", "studyTarget", "twoMiss", "certRoadmap", "weightTrend", "restingHeartRate", "nutrition", "sleep", "habits", "reviews", "economy", "gym", "studies"],
-    quickNavIds: ["nutrition", "economy", "gym", "habits", "studies", "sleep", "reviews", "statistics"],
+    quickNavIds: ["system", "nutrition", "economy", "gym", "habits", "studies", "sleep", "reviews", "statistics"],
+    widgetSizes: { economyMilestone: "wide", studyTarget: "wide", twoMiss: "detailed", certRoadmap: "wide" },
+    savedViews: [],
+    activeSavedViewId: "",
   };
 
   // Startvärden för trendwidgets. De är historikposter, inte hårdkodade UI-siffror.
