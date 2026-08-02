@@ -34,6 +34,7 @@ const paths = {
   pulse: "M3 12h4l2-5 4 10 2-5h6",
   user: "M12 12a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0",
   logout: "M10 17l5-5-5-5 M15 12H3 M19 4h2v16h-2",
+  link: "M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1 M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1",
 };
 
 export function Icon({ name, size = 20 }) {

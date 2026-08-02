@@ -1,14 +1,15 @@
 import { getGoalProgress, getGoalStatus, getNextAction } from "./goalEngine";
 import { localISO } from "../dates/dateUtils";
-import { isContingencyDay } from "../attention/attentionEngine";
+import { getTwoMissWarnings, isContingencyDay } from "../attention/attentionEngine";
 
-const priority = { overdue: 0, lost: 1, at_risk: 2, on_track: 3, active: 4, achieved: 5 };
+const priority = { overdue: 0, lost: 1, at_risk: 2, blocked: 3, on_track: 4, active: 5, paused: 6, achieved: 7 };
 
 export function buildTodayPlan(state, date = localISO()) {
   const floorMode = isContingencyDay(state, date);
+  const twoMissIds = new Set(getTwoMissWarnings(state).map((item) => item.habitId));
   const floorRules = state.today?.contingency?.date === date ? state.today.contingency.floorRules || {} : {};
   const actions = Object.values(state.goals)
-    .filter((goal) => goal.status !== "archived")
+    .filter((goal) => !["archived", "paused"].includes(goal.status))
     .map((goal) => {
       const status = getGoalStatus(state, goal, date);
       const progress = getGoalProgress(state, goal);
@@ -27,13 +28,15 @@ export function buildTodayPlan(state, date = localISO()) {
     .filter((action) => !action.dismissed && action.status.id !== "achieved")
     .sort((a, b) => priority[a.status.id] - priority[b.status.id] || a.progress.percent - b.progress.percent);
 
-  const habitActions = state.modules.habits.habits.map((habit) => {
+  const habitActions = state.modules.habits.habits.filter((habit) => !habit.paused && (habit.weekdays || [0, 1, 2, 3, 4, 5, 6]).includes(new Date(`${date}T12:00:00`).getDay())).map((habit) => {
     const completed = state.modules.habits.checkIns.some((entry) => entry.habitId === habit.id && entry.date === date && entry.done);
     return {
       id: `habit:${habit.id}:${date}`,
       habitId: habit.id,
       title: habit.name,
-      detail: completed ? "Klart för idag." : floorMode
+      detail: completed ? "Klart för idag." : twoMissIds.has(habit.id)
+        ? `Two-miss: gör floor nu — ${habit.minimumVersion || "två minuter"}.`
+        : floorMode
         ? `Floor-läge: ${floorRules.habits?.[habit.id] || habit.minimumVersion || floorRules.default || "gör två minuter"}.`
         : `Never zero: ${habit.minimumVersion || "gör minsta möjliga version"}.`,
       color: habit.color,

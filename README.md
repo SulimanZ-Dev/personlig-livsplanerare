@@ -2,27 +2,20 @@
 
 En mobile-first, local-first personlig livsplanerare med samma mörka terminalkänsla över webb, telefon och Windows.
 
-## Det här ingår
+## Livssystem 2.0
 
-- Generiska mål: mätvärde, minskningsmål, checklista och streak
-- Dynamisk status: aktivt, på rätt väg, risk, försenat, uppnått och tappat efter uppnått
-- Prognos, trend, nästa handling, daglig coachning och full progresshistorik
-- Hybrid-dashboard med valbara, flyttbara mål och områdeswidgets
-- Ekonomi med insättning, uttag, överföring, redigerbara/borttagbara konton och dynamiska sparmål
-- Gympass med valfria passnamn, övningar, set/reps/vikt och progressionsgraf
-- Rutiner med never-zero, minsta version och two-miss-regel
-- Deep-work-timer med veckosummering
-- Vecko-, månads- och kvartalsreview med framåt/bakåt/stilla-insikter
-- Publik nutrition-kalkylator med TDEE, underskott, protein och coach-varningar
-- Full transaktions-CRUD med omräknade saldon, sökning och en nivås undo
-- Komplett kostdagbok med kalorier, protein, kolhydrater, fett, fiber, måltider och kosttillskott
-- Snabbregistrering från tidigare intag, dagsmål för makron och nutritionstrender per vecka
-- Valbara dashboard-widgets och snabbgenvägar i datorns sidomeny och mobilens Mer-vy
-- Permanent målradering med bekräftelse, referensstädning och undo
-- Förstagångs-onboarding, säker lokal/moln-reset och JSON-backup/import
-- Samlade sexveckorstrender, ljust tema och tysta UI-indikatorer utan pushspam
-- Generisk fasmotor, contingency/floor-läge, fri cert-roadmap och länkade systemregler
-- Sömnlogg med vilopuls samt dynamiska vikt-, puls-, milstolpe- och KPI-widgets
+- Ett enda universellt **Logga +** för mat, vikt, gym, rutiner, studier och ekonomi, med favoriter och senaste val. Modulernas egna detaljknappar finns kvar.
+- Generiska mål med öka/minska, checklista och streak; delmål, beroenden, anteckningar, länkar, mallar, paus, duplicering, prognos, status och 30 dagars papperskorg.
+- Hybrid-dashboard byggd av verkliga mål- och modulwidgets. Användaren väljer ordning, storlek, sparade vyer och snabbgenvägar.
+- Gemensam dag/vecka/månadskalender, inbox, regelbaserad coach, automationer, veckoplanerare, wellbeing, underhållslägen, projekt-Kanban, livsadmin och scenarier.
+- Ekonomi med konto- och transaktions-CRUD, konto­typer, överföringar, budget, återkommande poster, avstämning, prenumerationer, prognos samt bank-CSV.
+- Gym med passmallar, upprepning/redigering/radering, RPE/RIR, warmup-set, e1RM/PR, volym, progressionssignal, vilotimer, plattkalkylator, deload och ersättningsövningar.
+- Nutrition med publik TDEE-kalkylator, coachvarningar, full kostdagbok, makron/tillskott, egna livsmedel per 100 g, fler-ingrediensrecept, portionsskalning, matplan, inköpslista, skafferi, vätska och veckosnitt.
+- Rutiner med valfria veckodagar, full/floor/miss, never-zero, two-miss, paus, grupper, heatmap och enkla korrelationer.
+- Studier med fri timer/Pomodoro, paus/fortsätt, planerad mot faktisk tid, projekt/ämne, certifieringsberoenden, resurser, provdatum och repetitionskö.
+- Datadrivna vecko-, månads- och kvartalsreviews, samlad statistik, global sökning/kommandopalett, lokala PWA-notiser och ett konfigurerbart Idag-flöde.
+- Upp till 20 session-undo-steg, fem automatiska lokala backuper, JSON import/export, modul-CSV, ljust/mörkt tema, densitet, textstorlek, kontrast, gester och lokalt PIN-lås.
+- Säker lokal eller lokal+moln-reset med exakt `RADERA`-bekräftelse och ny onboarding.
 - Offline-PWA och automatisk uppdatering när en ny version publiceras
 - Gratis kontosynk via Firebase Authentication och Firestore
 - Windows-klient som använder samma liveversion som webbappen
@@ -35,6 +28,8 @@ src/
   core/
     dates/             datumhjälpare
     goals/             mål-, status-, prognos- och idagmotor
+    system/            kalender, coachregler, sökning, automation och papperskorg
+    security/          lokalt PIN-lås
     attention/         two-miss och diskreta review-indikatorer
     phases/            generisk fas- och dagberäkning
     seeds/             separata personliga seedprofiler
@@ -48,15 +43,16 @@ src/
     habits/
     reviews/
     nutrition/
+    system/
     reference/
     settings/
     sleep/
     statistics/
     studies/
-  components/          delade UI- och målkomponenter
+  components/          UI, mål, global capture, sökning och säkerhet
 ```
 
-Allt tillstånd har ett versionsfält (`schemaVersion`) och lagras lokalt under `life-planner:v2`. Inloggade användare får dessutom en privat molnkopia under sin Firebase-användare. Säkerhetsreglerna i `firestore.rules` tillåter endast ägaren.
+Allt tillstånd följer `schemaVersion: 6` och lagras lokalt under `life-planner:v2`. Modulerna skriver mot samma serialiserbara app-state, vilket gör ett senare backendbyte möjligt utan att domänlogiken behöver byggas om. Inloggade användare får dessutom en privat molnkopia under sin Firebase-användare. Säkerhetsreglerna i `firestore.rules` tillåter endast ägaren.
 
 ## Lokal utveckling
 
@@ -74,6 +70,7 @@ Kvalitetskontroll:
 npm run lint
 npm test
 npm run build
+npm run seed:suli
 ```
 
 Windows:

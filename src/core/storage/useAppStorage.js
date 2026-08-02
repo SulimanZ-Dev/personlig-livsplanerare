@@ -7,6 +7,8 @@ import { createInitialState } from "./schema";
 
 const KEY = "life-planner:v2";
 const DEVICE_KEY = "life-planner:device-id";
+const BACKUP_KEY = "life-planner:backups";
+const UNDO_LIMIT = 20;
 
 const getDeviceId = () => {
   let id = window.localStorage.getItem(DEVICE_KEY);
@@ -18,6 +20,16 @@ const getDeviceId = () => {
 };
 
 const cleanForCloud = (value) => JSON.parse(JSON.stringify(value));
+
+const saveLocalBackup = (snapshot, label) => {
+  try {
+    const existing = JSON.parse(window.localStorage.getItem(BACKUP_KEY) || "[]");
+    const backups = [{ id: crypto.randomUUID(), label, createdAt: new Date().toISOString(), state: snapshot }, ...existing].slice(0, 5);
+    window.localStorage.setItem(BACKUP_KEY, JSON.stringify(backups));
+  } catch {
+    // Optional backup history must never block the primary save.
+  }
+};
 
 const loadInitial = () => {
   try {
@@ -39,7 +51,7 @@ export function useAppStorage(user) {
   const stateRef = useRef(initial.state);
   const syncTimer = useRef(null);
   const undoTimer = useRef(null);
-  const undoRef = useRef(null);
+  const undoRef = useRef([]);
   const applyingRemote = useRef(false);
   const ignoreRemoteUntil = useRef(0);
   const resolvedUserId = useRef("");
@@ -118,13 +130,14 @@ export function useAppStorage(user) {
     setState((previous) => {
       if (!previous) return previous;
       if (activityEntry) {
-        undoRef.current = previous;
-        setUndoInfo({ label: activityEntry.title || "Senaste ändringen" });
+        undoRef.current = [...undoRef.current, previous].slice(-UNDO_LIMIT);
+        saveLocalBackup(previous, activityEntry.title || "Automatisk backup");
+        setUndoInfo({ label: activityEntry.title || "Senaste ändringen", count: undoRef.current.length });
         window.clearTimeout(undoTimer.current);
         undoTimer.current = window.setTimeout(() => {
-          undoRef.current = null;
+          undoRef.current = [];
           setUndoInfo(null);
-        }, 8000);
+        }, 12000);
       }
       let next = typeof recipe === "function" ? recipe(previous) : recipe;
       if (activityEntry) next = { ...next, activity: [...(next.activity || []), activityEntry] };
@@ -153,7 +166,7 @@ export function useAppStorage(user) {
   const replaceState = useCallback((incoming, label = "Importerad backup") => {
     const normalized = normalizeState(incoming);
     setState((previous) => {
-      if (previous) undoRef.current = previous;
+      if (previous) undoRef.current = [...undoRef.current, previous].slice(-UNDO_LIMIT);
       const stamped = {
         ...normalized,
         meta: {
@@ -176,10 +189,12 @@ export function useAppStorage(user) {
     fresh.meta.deviceId = getDeviceId();
     window.localStorage.removeItem("life-planner:v1");
     window.localStorage.removeItem("ekonomi-state-v1");
+    window.localStorage.removeItem(BACKUP_KEY);
+    window.localStorage.removeItem("life-planner:pin-hash");
     Object.keys(window.localStorage).filter((key) => key.startsWith("life-planner:notification:")).forEach((key) => window.localStorage.removeItem(key));
     window.localStorage.setItem(KEY, JSON.stringify(fresh));
     stateRef.current = fresh;
-    undoRef.current = null;
+    undoRef.current = [];
     setUndoInfo(null);
     setState(fresh);
     if (!syncCloud) ignoreRemoteUntil.current = Date.now() + 2000;
@@ -192,7 +207,7 @@ export function useAppStorage(user) {
   }, [userId]);
 
   const undo = useCallback(() => {
-    const snapshot = undoRef.current;
+    const snapshot = undoRef.current.at(-1);
     if (!snapshot) return;
     setState((current) => {
       const restored = {
@@ -209,9 +224,12 @@ export function useAppStorage(user) {
       scheduleSync(restored);
       return restored;
     });
-    undoRef.current = null;
-    setUndoInfo(null);
-    window.clearTimeout(undoTimer.current);
+    undoRef.current = undoRef.current.slice(0, -1);
+    if (undoRef.current.length) setUndoInfo({ label: "Tidigare ändring", count: undoRef.current.length });
+    else {
+      setUndoInfo(null);
+      window.clearTimeout(undoTimer.current);
+    }
   }, [scheduleSync]);
 
   return { state, update, replaceState, resetState, undo, undoInfo, error, syncStatus };

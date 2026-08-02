@@ -101,3 +101,31 @@ export function transactionImpact(transaction, accountId) {
   if (transaction.accountId === accountId) return Number(transaction.amount) || 0;
   return 0;
 }
+
+export function monthlySummary(economy, month = new Date().toISOString().slice(0, 7)) {
+  const summary = (economy.transactions || []).reduce((result, transaction) => {
+    if (!String(transaction.date || transaction.occurredAt).startsWith(month) || transaction.type === "transfer" || transaction.affectsBalance === false) return result;
+    const amount = Math.abs(Number(transaction.amount) || 0);
+    if (transaction.type === "deposit") result.income += amount;
+    if (transaction.type === "withdrawal") result.expenses += amount;
+    return result;
+  }, { income: 0, expenses: 0, savingsRate: 0 });
+  summary.savingsRate = summary.income ? (summary.income - summary.expenses) / summary.income * 100 : 0;
+  return summary;
+}
+
+export function economyForecast(economy, days = 90, from = new Date()) {
+  const rows = [];
+  const end = new Date(from);
+  end.setDate(end.getDate() + days);
+  (economy.recurringTransactions || []).filter((item) => item.enabled !== false).forEach((item) => {
+    const cursor = new Date(from.getFullYear(), from.getMonth(), Math.min(28, Number(item.day) || 1), 12);
+    if (cursor < from) cursor.setMonth(cursor.getMonth() + 1);
+    while (cursor <= end) {
+      rows.push({ ...item, projectedDate: cursor.toISOString().slice(0, 10), signedAmount: item.type === "withdrawal" ? -Math.abs(Number(item.amount) || 0) : item.type === "transfer" ? 0 : Math.abs(Number(item.amount) || 0) });
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+  });
+  const opening = economyTotal(economy);
+  return { opening, rows: rows.sort((a, b) => a.projectedDate.localeCompare(b.projectedDate)), closing: opening + rows.reduce((sum, item) => sum + item.signedAmount, 0) };
+}

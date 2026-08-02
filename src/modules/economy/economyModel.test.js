@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { accountBalance, economyTotal, removeAccountFromPlannerState, removeAccountLedger, removeTransaction, transactionTouchesAccount, upsertTransaction } from "./economyModel";
+import { accountBalance, economyForecast, economyTotal, monthlySummary, removeAccountFromPlannerState, removeAccountLedger, removeTransaction, transactionTouchesAccount, upsertTransaction } from "./economyModel";
 
 const economy = {
   accounts: {
@@ -85,5 +85,15 @@ describe("economy ledger", () => {
   it("does nothing when the account no longer exists", () => {
     const plannerState = { goals: {}, goalEntries: {}, modules: { economy } };
     expect(removeAccountFromPlannerState(plannerState, "missing")).toBe(plannerState);
+  });
+
+  it("summarizes months and projects recurring cash flow", () => {
+    const data = { ...economy, transactions: economy.transactions.map((item) => ({ ...item, date: "2026-01-10" })), recurringTransactions: [{ id: "rent", name: "Hyra", type: "withdrawal", amount: 100, day: 5, enabled: true }] };
+    const summary = monthlySummary(data, "2026-01");
+    expect(summary.income).toBe(200);
+    expect(summary.expenses).toBe(350);
+    const forecast = economyForecast(data, 40, new Date("2026-01-01T12:00:00"));
+    expect(forecast.rows.length).toBeGreaterThan(0);
+    expect(forecast.closing).toBeLessThan(forecast.opening);
   });
 });

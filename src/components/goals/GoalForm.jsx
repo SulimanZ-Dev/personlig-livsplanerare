@@ -20,6 +20,10 @@ const emptyGoal = {
   unit: "",
   checklistText: "",
   actionLabel: "",
+  milestonesText: "",
+  notes: "",
+  linksText: "",
+  dependsOn: "",
 };
 
 const formFromGoal = (goal) => goal ? {
@@ -27,20 +31,27 @@ const formFromGoal = (goal) => goal ? {
   ...goal,
   templateId: "custom",
   checklistText: (goal.checklistItems || []).map((item) => item.label).join("\n"),
+  milestonesText: (goal.milestones || []).map((item) => `${item.value}|${item.label}`).join("\n"),
+  linksText: (goal.links || []).join("\n"),
 } : emptyGoal;
 
 export function GoalForm({ goal, state, onSave, onClose }) {
   const [form, setForm] = useState(() => formFromGoal(goal));
   const [formError, setFormError] = useState("");
   const accounts = Object.values(state.modules.economy.accounts).filter((account) => !account.archived);
+  const templates = useMemo(() => [...GOAL_TEMPLATES, ...(state.goalTemplates || []).map((template) => ({ ...template, icon: template.icon || "target" }))], [state.goalTemplates]);
 
   const selectedTemplate = useMemo(
-    () => GOAL_TEMPLATES.find((template) => template.id === form.templateId) || GOAL_TEMPLATES.at(-1),
-    [form.templateId],
+    () => templates.find((template) => template.id === form.templateId) || templates.at(-1),
+    [form.templateId, templates],
   );
   const field = (key) => (event) => setForm((current) => ({ ...current, [key]: event.target.value }));
 
   const chooseTemplate = (template) => {
+    if (template.snapshot) {
+      setForm((current) => ({ ...current, ...template.snapshot, templateId: template.id, name: template.snapshot.name ? `${template.snapshot.name} kopia` : "" }));
+      return;
+    }
     setForm((current) => ({
       ...current,
       templateId: template.id,
@@ -87,6 +98,8 @@ export function GoalForm({ goal, state, onSave, onClose }) {
           done: goal?.checklistItems?.[index]?.done || false,
         }))
         : [],
+      milestones: form.type === "number" ? form.milestonesText.split("\n").map((line) => { const [value, ...label] = line.split("|"); return { id: `milestone-${crypto.randomUUID()}`, value: Number(value), label: label.join("|").trim() || `${value} ${form.unit}` }; }).filter((item) => Number.isFinite(item.value)) : [],
+      links: form.linksText.split("\n").map((link) => link.trim()).filter(Boolean),
       status: goal?.status || "active",
       startDate: goal?.startDate || localISO(),
       createdAt: goal?.createdAt || new Date().toISOString(),
@@ -101,7 +114,7 @@ export function GoalForm({ goal, state, onSave, onClose }) {
       <form className="form-stack goal-form" onSubmit={submit}>
         {!goal && (
           <div className="template-strip" aria-label="Målmallar">
-            {GOAL_TEMPLATES.map((template) => (
+            {templates.map((template) => (
               <button type="button" key={template.id} className={form.templateId === template.id ? "active" : ""} onClick={() => chooseTemplate(template)}>
                 <Icon name={template.icon} size={17} />
                 <span>{template.label}</span>
@@ -162,6 +175,7 @@ export function GoalForm({ goal, state, onSave, onClose }) {
         )}
 
         {form.type === "checklist" && <label>Delmål, ett per rad<textarea rows="5" value={form.checklistText} onChange={field("checklistText")} placeholder={"Planera\nGenomföra\nUtvärdera"} required /></label>}
+        {form.type === "number" && <label>Delmål · valfritt, format värde|namn<textarea rows="3" value={form.milestonesText} onChange={field("milestonesText")} placeholder={"25000|Första kvartalet\n50000|Halvvägs"} /></label>}
 
         {form.type === "streak" && <div className="field-grid"><label>Mål i dagar<input type="number" min="1" value={form.targetValue} onChange={field("targetValue")} /></label><label>Enhet<input value={form.unit} onChange={field("unit")} /></label></div>}
 
@@ -170,6 +184,9 @@ export function GoalForm({ goal, state, onSave, onClose }) {
           <label>Kategori<input value={form.category || selectedTemplate.label} onChange={field("category")} /></label>
         </div>
         <label>Din konkreta handling<input value={form.actionLabel} onChange={field("actionLabel")} placeholder="Valfritt, t.ex. väg mig varje söndag" /></label>
+        <label>Beroende · börja efter ett annat mål<select value={form.dependsOn} onChange={field("dependsOn")}><option value="">Inget beroende</option>{Object.values(state.goals).filter((item) => item.id !== goal?.id).map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select></label>
+        <label>Anteckningar<textarea rows="3" value={form.notes} onChange={field("notes")} placeholder="Varför målet är viktigt, strategi, hinder…" /></label>
+        <label>Länkar · en per rad<textarea rows="2" value={form.linksText} onChange={field("linksText")} placeholder="https://…" /></label>
         <div className="color-row"><span>Accent</span>{["#3ddc84", "#5eb1ff", "#a78bfa", "#f0b429", "#f0704a", "#f472b6"].map((color) => <button type="button" aria-label={`Välj färg ${color}`} className={form.color === color ? "active" : ""} style={{ background: color }} key={color} onClick={() => setForm({ ...form, color })} />)}</div>
         {formError && <div className="form-error" role="alert">{formError}</div>}
         <button className="primary-button" type="submit">{goal ? "Spara ändringar" : "Skapa mål"}</button>

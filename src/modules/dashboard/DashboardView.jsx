@@ -8,7 +8,7 @@ import { buildTodayPlan, coachMessage } from "../../core/goals/todayPlanner";
 import { localISO } from "../../core/dates/dateUtils";
 import { buildQuietIndicators, getTwoMissWarnings } from "../../core/attention/attentionEngine";
 
-const statusRank = { overdue: 0, lost: 1, at_risk: 2, on_track: 3, active: 4, achieved: 5 };
+const statusRank = { overdue: 0, lost: 1, at_risk: 2, blocked: 3, on_track: 4, active: 5, paused: 6, achieved: 7 };
 
 export function DashboardView({ state, onNavigate, onOpenGoal, onQuickUpdate, onSetContingency, onDismissAttention }) {
   const actions = useMemo(() => buildTodayPlan(state), [state]);
@@ -64,7 +64,7 @@ export function DashboardView({ state, onNavigate, onOpenGoal, onQuickUpdate, on
         <div className="section-title"><span>DINA OMRÅDEN</span><button onClick={() => onNavigate("dashboardSettings")}>Anpassa</button></div>
         <div className="module-grid">
           {orderedModules.filter((module) => moduleOrder.includes(module.id) && !state.dashboard.hiddenWidgetIds.includes(module.id)).map((module) => (
-            <button className="card living-module-card" key={module.id} onClick={() => onNavigate(module.route || module.id)} style={{ "--module-color": module.color }}>
+            <button className={`card living-module-card widget-${state.dashboard.widgetSizes?.[module.id] || "small"}`} key={module.id} onClick={() => onNavigate(module.route || module.id)} style={{ "--module-color": module.color }}>
               <span className="module-symbol"><Icon name={module.icon} /></span>
               <span className="eyebrow">{module.label}</span>
               <strong>{module.summary(state)}</strong>

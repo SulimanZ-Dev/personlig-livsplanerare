@@ -7,6 +7,8 @@ export const GOAL_STATUS = {
   overdue: { label: "Försenat", tone: "danger" },
   achieved: { label: "Uppnått", tone: "positive" },
   lost: { label: "Tappat efter uppnått", tone: "danger" },
+  paused: { label: "Pausat", tone: "neutral" },
+  blocked: { label: "Väntar på annat mål", tone: "neutral" },
   active: { label: "Aktivt", tone: "neutral" },
 };
 
@@ -57,6 +59,8 @@ export function getGoalProgress(state, goal) {
 
 export function getGoalStatus(state, goal, today = localISO()) {
   const progress = getGoalProgress(state, goal);
+  if (goal.status === "paused") return { id: "paused", ...GOAL_STATUS.paused };
+  if (goal.dependsOn && state.goals[goal.dependsOn] && !isGoalReached(state.goals[goal.dependsOn], getGoalValue(state, state.goals[goal.dependsOn]))) return { id: "blocked", ...GOAL_STATUS.blocked };
   const reached = isGoalReached(goal, progress.value);
   if (reached) return { id: "achieved", ...GOAL_STATUS.achieved };
   if (goal.achievedAt) return { id: "lost", ...GOAL_STATUS.lost };
